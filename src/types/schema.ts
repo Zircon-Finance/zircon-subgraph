@@ -10,6 +10,7 @@ import {
   BigInt,
   BigDecimal
 } from "@graphprotocol/graph-ts";
+import { ZERO_BI } from "../mappings/helpers";
 
 export class UniswapFactory extends Entity {
   constructor(id: string) {
@@ -37,8 +38,9 @@ export class UniswapFactory extends Entity {
     }
   }
 
-  static load(id: string): UniswapFactory  {
-    return changetype<UniswapFactory >(store.get("UniswapFactory", id));
+  static load(id: string): UniswapFactory {
+    if (store.get("UniswapFactory", id)) return changetype<UniswapFactory>(store.get("UniswapFactory", id)
+    // return store.get("UniswapFactory", id) !== null ? (changetype<UniswapFactory>(store.get("UniswapFactory", id))) : new UniswapFactory('0');
   }
 
   get id(): string {
@@ -142,8 +144,8 @@ export class Token extends Entity {
     }
   }
 
-  static load(id: string): Token  {
-    return changetype<Token >(store.get("Token", id));
+  static load(id: string): Token {
+    return store.get("Token", id) !== null ? (changetype<Token>(store.get("Token", id))) : new Token('0');
   }
 
   get id(): string {
@@ -236,16 +238,12 @@ export class Token extends Entity {
     this.set("totalLiquidity", Value.fromBigDecimal(value));
   }
 
-  get derivedETH(): BigDecimal  {
+  get derivedETH(): BigDecimal {
     let value = this.get("derivedETH");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null as BigDecimal;
-    } else {
-      return value.toBigDecimal();
-    }
+    if (value) {return value.toBigDecimal()} else {return new BigDecimal(ZERO_BI)}
   }
 
-  set derivedETH(value: BigDecimal ) {
+  set derivedETH(value: BigDecimal) {
     if (!value) {
       this.unset("derivedETH");
     } else {
@@ -337,7 +335,7 @@ export class Pair extends Entity {
   }
 
   static load(id: string): Pair {
-    return changetype<Pair>(store.get("Pair", id));
+    return store.get("Pair", id) !== null ? (changetype<Pair>(store.get("Pair", id))) : new Pair('0');
   }
 
   get id(): string {
@@ -587,7 +585,7 @@ export class User extends Entity {
   }
 
   static load(id: string): User {
-    return changetype<User>(store.get("User", id));
+    return store.get("User", id) !== null ? (changetype<User>(store.get("User", id))) : new User('0');
   }
 
   get id(): string {
@@ -602,7 +600,7 @@ export class User extends Entity {
   get liquidityPositions(): Array<string> {
     let value = this.get("liquidityPositions");
     if (!value || value.kind == ValueKind.NULL) {
-      return null as Array<string>;
+      return [];
     } else {
       return value.toStringArray();
     }
@@ -652,9 +650,7 @@ export class LiquidityPosition extends Entity {
   }
 
   static load(id: string): LiquidityPosition {
-    return changetype<LiquidityPosition>(
-      store.get("LiquidityPosition", id)
-    );
+    return store.get("LiquidityPosition", id) !== null ? (changetype<LiquidityPosition>(store.get("LiquidityPosition", id))) : new LiquidityPosition('0');
   }
 
   get id(): string {
@@ -731,10 +727,10 @@ export class LiquidityPositionSnapshot extends Entity {
     }
   }
 
-  static load(id: string): LiquidityPositionSnapshot  {
-    return changetype<LiquidityPositionSnapshot >(
-      store.get("LiquidityPositionSnapshot", id)
-    );
+  static load(id: string): LiquidityPositionSnapshot {
+    return store.get("LiquidityPositionSnapshot", id) !== null ? 
+    (changetype<LiquidityPositionSnapshot>(store.get("LiquidityPositionSnapshot", id))) 
+    : new LiquidityPositionSnapshot('0');
   }
 
   get id(): string {
@@ -876,8 +872,8 @@ export class Transaction extends Entity {
     }
   }
 
-  static load(id: string): Transaction  {
-    return changetype<Transaction >(store.get("Transaction", id));
+  static load(id: string): Transaction {
+    return store.get("Transaction", id) !== null ? (changetype<Transaction>(store.get("Transaction", id))) : new Transaction('0');
   }
 
   get id(): string {
@@ -907,16 +903,16 @@ export class Transaction extends Entity {
     this.set("timestamp", Value.fromBigInt(value));
   }
 
-  get mints(): Array<string>  {
+  get mints(): Array<string> {
     let value = this.get("mints");
     if (!value || value.kind == ValueKind.NULL) {
-      return null as Array<string>;
+      return [];
     } else {
       return value.toStringArray();
     }
   }
 
-  set mints(value: Array<string> ) {
+  set mints(value: Array<string>) {
     if (!value) {
       this.unset("mints");
     } else {
@@ -924,16 +920,16 @@ export class Transaction extends Entity {
     }
   }
 
-  get burns(): Array<string>  {
+  get burns(): Array<string> {
     let value = this.get("burns");
     if (!value || value.kind == ValueKind.NULL) {
-      return null as Array<string>;
+      return [];
     } else {
       return value.toStringArray();
     }
   }
 
-  set burns(value: Array<string> ) {
+  set burns(value: Array<string>) {
     if (!value) {
       this.unset("burns");
     } else {
@@ -941,16 +937,16 @@ export class Transaction extends Entity {
     }
   }
 
-  get swaps(): Array<string>  {
+  get swaps(): Array<string> {
     let value = this.get("swaps");
     if (!value || value.kind == ValueKind.NULL) {
-      return null as Array<string>;
+      return [];
     } else {
       return value.toStringArray();
     }
   }
 
-  set swaps(value: Array<string> ) {
+  set swaps(value: Array<string>) {
     if (!value) {
       this.unset("swaps");
     } else {
@@ -983,8 +979,8 @@ export class Mint extends Entity {
     }
   }
 
-  static load(id: string): Mint  {
-    return changetype<Mint >(store.get("Mint", id));
+  static load(id: string): Mint {
+    return store.get("Mint", id) !== null ? (changetype<Mint>(store.get("Mint", id))) : new Mint('0');
   }
 
   get id(): string {
@@ -1041,16 +1037,16 @@ export class Mint extends Entity {
     this.set("liquidity", Value.fromBigDecimal(value));
   }
 
-  get sender(): Bytes  {
+  get sender(): Bytes {
     let value = this.get("sender");
     if (!value || value.kind == ValueKind.NULL) {
-      return null as Bytes;
+      return new Bytes(0);
     } else {
       return value.toBytes();
     }
   }
 
-  set sender(value: Bytes ) {
+  set sender(value: Bytes) {
     if (!value) {
       this.unset("sender");
     } else {
@@ -1058,16 +1054,12 @@ export class Mint extends Entity {
     }
   }
 
-  get amount0(): BigDecimal  {
+  get amount0(): BigDecimal {
     let value = this.get("amount0");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null as BigDecimal;
-    } else {
-      return value.toBigDecimal();
-    }
+    if (value) return value.toBigDecimal();
   }
 
-  set amount0(value: BigDecimal ) {
+  set amount0(value: BigDecimal) {
     if (!value) {
       this.unset("amount0");
     } else {
@@ -1075,16 +1067,12 @@ export class Mint extends Entity {
     }
   }
 
-  get amount1(): BigDecimal  {
+  get amount1(): BigDecimal {
     let value = this.get("amount1");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null as BigDecimal;
-    } else {
-      return value.toBigDecimal();
-    }
+    if (value) return value.toBigDecimal()
   }
 
-  set amount1(value: BigDecimal ) {
+  set amount1(value: BigDecimal) {
     if (!value) {
       this.unset("amount1");
     } else {
@@ -1092,16 +1080,16 @@ export class Mint extends Entity {
     }
   }
 
-  get logIndex(): BigInt  {
+  get logIndex(): BigInt {
     let value = this.get("logIndex");
     if (!value || value.kind == ValueKind.NULL) {
-      return null as BigInt;
+      return ZERO_BI;
     } else {
       return value.toBigInt();
     }
   }
 
-  set logIndex(value: BigInt ) {
+  set logIndex(value: BigInt) {
     if (!value) {
       this.unset("logIndex");
     } else {
@@ -1109,16 +1097,12 @@ export class Mint extends Entity {
     }
   }
 
-  get amountUSD(): BigDecimal  {
+  get amountUSD(): BigDecimal {
     let value = this.get("amountUSD");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null as BigDecimal; 
-    } else {
-      return value.toBigDecimal();
-    }
+    if (value) return value.toBigDecimal()
   }
 
-  set amountUSD(value: BigDecimal ) {
+  set amountUSD(value: BigDecimal) {
     if (!value) {
       this.unset("amountUSD");
     } else {
@@ -1126,16 +1110,16 @@ export class Mint extends Entity {
     }
   }
 
-  get feeTo(): Bytes  {
+  get feeTo(): Bytes {
     let value = this.get("feeTo");
     if (!value || value.kind == ValueKind.NULL) {
-      return null as Bytes;
+      return new Bytes;
     } else {
       return value.toBytes();
     }
   }
 
-  set feeTo(value: Bytes ) {
+  set feeTo(value: Bytes) {
     if (!value) {
       this.unset("feeTo");
     } else {
@@ -1143,16 +1127,12 @@ export class Mint extends Entity {
     }
   }
 
-  get feeLiquidity(): BigDecimal  {
+  get feeLiquidity(): BigDecimal {
     let value = this.get("feeLiquidity");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null as BigDecimal;
-    } else {
-      return value.toBigDecimal();
-    }
+    if (value) return value.toBigDecimal()
   }
 
-  set feeLiquidity(value: BigDecimal ) {
+  set feeLiquidity(value: BigDecimal) {
     if (!value) {
       this.unset("feeLiquidity");
     } else {
@@ -1185,8 +1165,8 @@ export class Burn extends Entity {
     }
   }
 
-  static load(id: string): Burn  {
-    return changetype<Burn >(store.get("Burn", id));
+  static load(id: string): Burn {
+    return store.get("Burn", id) !== null ? (changetype<Burn>(store.get("Burn", id))) : new Burn('0');
   }
 
   get id(): string {
@@ -1234,16 +1214,16 @@ export class Burn extends Entity {
     this.set("liquidity", Value.fromBigDecimal(value));
   }
 
-  get sender(): Bytes  {
+  get sender(): Bytes {
     let value = this.get("sender");
     if (!value || value.kind == ValueKind.NULL) {
-      return null as Bytes;
+      return new Bytes(0);
     } else {
       return value.toBytes();
     }
   }
 
-  set sender(value: Bytes ) {
+  set sender(value: Bytes) {
     if (!value) {
       this.unset("sender");
     } else {
@@ -1251,16 +1231,12 @@ export class Burn extends Entity {
     }
   }
 
-  get amount0(): BigDecimal  {
+  get amount0(): BigDecimal {
     let value = this.get("amount0");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null as BigDecimal;
-    } else {
-      return value.toBigDecimal();
-    }
+    if (value) return value.toBigDecimal()
   }
 
-  set amount0(value: BigDecimal ) {
+  set amount0(value: BigDecimal) {
     if (!value) {
       this.unset("amount0");
     } else {
@@ -1268,16 +1244,12 @@ export class Burn extends Entity {
     }
   }
 
-  get amount1(): BigDecimal  {
+  get amount1(): BigDecimal {
     let value = this.get("amount1");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null as BigDecimal;
-    } else {
-      return value.toBigDecimal();
-    }
+    if (value) return value.toBigDecimal()
   }
 
-  set amount1(value: BigDecimal ) {
+  set amount1(value: BigDecimal) {
     if (!value) {
       this.unset("amount1");
     } else {
@@ -1285,16 +1257,16 @@ export class Burn extends Entity {
     }
   }
 
-  get to(): Bytes  {
+  get to(): Bytes {
     let value = this.get("to");
     if (!value || value.kind == ValueKind.NULL) {
-      return null as Bytes;
+      return new Bytes;
     } else {
       return value.toBytes();
     }
   }
 
-  set to(value: Bytes ) {
+  set to(value: Bytes) {
     if (!value) {
       this.unset("to");
     } else {
@@ -1302,16 +1274,16 @@ export class Burn extends Entity {
     }
   }
 
-  get logIndex(): BigInt  {
+  get logIndex(): BigInt {
     let value = this.get("logIndex");
     if (!value || value.kind == ValueKind.NULL) {
-      return null as BigInt;
+      return ZERO_BI;
     } else {
       return value.toBigInt();
     }
   }
 
-  set logIndex(value: BigInt ) {
+  set logIndex(value: BigInt) {
     if (!value) {
       this.unset("logIndex");
     } else {
@@ -1319,16 +1291,12 @@ export class Burn extends Entity {
     }
   }
 
-  get amountUSD(): BigDecimal  {
+  get amountUSD(): BigDecimal {
     let value = this.get("amountUSD");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null as BigDecimal;
-    } else {
-      return value.toBigDecimal();
-    }
+    if (value) return value.toBigDecimal()
   }
 
-  set amountUSD(value: BigDecimal ) {
+  set amountUSD(value: BigDecimal) {
     if (!value) {
       this.unset("amountUSD");
     } else {
@@ -1345,16 +1313,16 @@ export class Burn extends Entity {
     this.set("needsComplete", Value.fromBoolean(value));
   }
 
-  get feeTo(): Bytes  {
+  get feeTo(): Bytes {
     let value = this.get("feeTo");
     if (!value || value.kind == ValueKind.NULL) {
-      return null as Bytes;
+      return new Bytes;
     } else {
       return value.toBytes();
     }
   }
 
-  set feeTo(value: Bytes ) {
+  set feeTo(value: Bytes) {
     if (!value) {
       this.unset("feeTo");
     } else {
@@ -1362,16 +1330,12 @@ export class Burn extends Entity {
     }
   }
 
-  get feeLiquidity(): BigDecimal  {
+  get feeLiquidity(): BigDecimal {
     let value = this.get("feeLiquidity");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null as BigDecimal;
-    } else {
-      return value.toBigDecimal();
-    }
+    if (value) return value.toBigDecimal()
   }
 
-  set feeLiquidity(value: BigDecimal ) {
+  set feeLiquidity(value: BigDecimal) {
     if (!value) {
       this.unset("feeLiquidity");
     } else {
@@ -1410,8 +1374,8 @@ export class Swap extends Entity {
     }
   }
 
-  static load(id: string): Swap  {
-    return changetype<Swap >(store.get("Swap", id));
+  static load(id: string): Swap {
+    return store.get("Swap", id) !== null ? (changetype<Swap>(store.get("Swap", id))) : new Swap('0');
   }
 
   get id(): string {
@@ -1513,16 +1477,16 @@ export class Swap extends Entity {
     this.set("to", Value.fromBytes(value));
   }
 
-  get logIndex(): BigInt  {
+  get logIndex(): BigInt {
     let value = this.get("logIndex");
     if (!value || value.kind == ValueKind.NULL) {
-      return null as BigInt;
+      return ZERO_BI;
     } else {
       return value.toBigInt();
     }
   }
 
-  set logIndex(value: BigInt ) {
+  set logIndex(value: BigInt) {
     if (!value) {
       this.unset("logIndex");
     } else {
@@ -1560,8 +1524,8 @@ export class Bundle extends Entity {
     }
   }
 
-  static load(id: string): Bundle  {
-    return changetype<Bundle >(store.get("Bundle", id));
+  static load(id: string): Bundle {
+    return store.get("Bundle", id) !== null ? (changetype<Bundle>(store.get("Bundle", id))) : new Bundle('0');
   }
 
   get id(): string {
@@ -1611,8 +1575,8 @@ export class UniswapDayData extends Entity {
     }
   }
 
-  static load(id: string): UniswapDayData  {
-    return changetype<UniswapDayData >(store.get("UniswapDayData", id));
+  static load(id: string): UniswapDayData {
+    return store.get("UniswapDayData", id) !== null ? (changetype<UniswapDayData>(store.get("UniswapDayData", id))) : new UniswapDayData('0');
   }
 
   get id(): string {
@@ -1735,8 +1699,8 @@ export class PairHourData extends Entity {
     }
   }
 
-  static load(id: string): PairHourData  {
-    return changetype<PairHourData >(store.get("PairHourData", id));
+  static load(id: string): PairHourData {
+    return store.get("PairHourData", id) !== null ? (changetype<PairHourData>(store.get("PairHourData", id))) : new PairHourData('0');
   }
 
   get id(): string {
@@ -1870,8 +1834,8 @@ export class PairDayData extends Entity {
     }
   }
 
-  static load(id: string): PairDayData  {
-    return changetype<PairDayData >(store.get("PairDayData", id));
+  static load(id: string): PairDayData {
+    return store.get("PairDayData", id) !== null ? (changetype<PairDayData>(store.get("PairDayData", id))) : new PairDayData('0');
   }
 
   get id(): string {
@@ -2021,8 +1985,8 @@ export class TokenDayData extends Entity {
     }
   }
 
-  static load(id: string): TokenDayData  {
-    return changetype<TokenDayData >(store.get("TokenDayData", id));
+  static load(id: string): TokenDayData {
+    return store.get("TokenDayData", id) !== null ? (changetype<TokenDayData>(store.get("TokenDayData", id))) : new TokenDayData('0');
   }
 
   get id(): string {
