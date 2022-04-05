@@ -1,0 +1,25 @@
+{
+  "name": "zircon-subgraph",
+  "version": "1.0.0",
+  "repository": "https://github.com/Zircon-Finance/zircon-subgraph",
+  "license": "GPL-3.0-or-later",
+  "scripts": {
+    "codegen": "graph codegen --output-dir src/types/",
+    "build": "graph build",
+    "deploy": "graph deploy --product hosted-service --access-token 0c3ce548b2cc45879014202022d1a044 --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/  reshyresh/zircon-finance"
+  },
+  "devDependencies": {
+    "@graphprotocol/graph-cli": "^0.16.0",
+    "@graphprotocol/graph-ts": "^0.16.0",
+    "@typescript-eslint/eslint-plugin": "^2.0.0",
+    "@typescript-eslint/parser": "^2.0.0",
+    "eslint": "^6.2.2",
+    "eslint-config-prettier": "^6.1.0",
+    "prettier": "^1.18.2",
+    "typescript": "^3.5.2"
+  },
+  "dependencies": {
+    "i": "^0.3.7",
+    "npm": "^8.5.4"
+  }
+}
