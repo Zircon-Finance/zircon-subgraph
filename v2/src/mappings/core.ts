@@ -35,6 +35,105 @@ function isCompleteMint(mintId: string): boolean {
   return MintEvent.load(mintId).sender !== null // sufficient checks
 }
 
+// TODO: Import ZirconPoolToken ABI
+//
+
+export function handleTransferPoolTokens(event: Transfer): void {
+  // Mint
+  if (event.params.to.toHexString() == ADDRESS_ZERO && event.params.value.equals(BigInt.fromI32(1000))) {
+    return
+  }
+
+  let factory = ZirconFactory.load(PYLON_FACTORY) //TODO: Pylon Factory
+  let transactionHash = event.transaction.hash.toHexString()
+  log.warning('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA {}', [transactionHash])
+
+  // user stats
+  let from = event.params.from
+  createUser(from)
+  let to = event.params.to
+  createUser(to)
+
+  // get pair and load contract
+  //TODO: PoolToken Load
+  let pair = Pair.load(event.address.toHexString())
+  let pairContract = PairContract.bind(event.address)
+
+
+  // liquidity token amount being transfered
+  let value = convertTokenToDecimal(event.params.value, BI_18)
+
+  // get or create transaction
+  let transaction = Transaction.load(transactionHash)
+  if (transaction === null) {
+    transaction = new Transaction(transactionHash)
+    transaction.blockNumber = event.block.number
+    transaction.timestamp = event.block.timestamp
+    transaction.mints = []
+    transaction.burns = []
+  }
+
+  // mints
+  let mints = transaction.mints
+  if (from.toHexString() == ADDRESS_ZERO) {
+    // update total supply
+    pair.totalSupply = pair.totalSupply.plus(value)
+    pair.save()
+
+    // create new mint if no mints so far or if last one is done already
+    if (mints.length === 0 || isCompleteMint(mints![mints.length - 1])) {
+      let mint = new MintEvent(
+        event.transaction.hash
+          .toHexString()
+          .concat('-')
+          .concat(BigInt.fromI32(mints.length).toString())
+      )
+      mint.transaction = transaction.id
+      mint.pair = pair.id //TODO: Pair id
+      mint.to = to
+      mint.liquidity = value
+      mint.timestamp = transaction.timestamp
+      mint.transaction = transaction.id
+      mint.save()
+
+      // update mints in transaction
+      transaction.mints = mints.concat([mint.id])
+
+      // save entities
+      transaction.save()
+      factory.save()
+    }
+  }
+
+  // case where direct send first on ETH withdrawls
+  //TODO: Change pair to pylon
+  if (event.params.to.toHexString() == pair.id) {
+    let burns = transaction.burns
+    let burn = new BurnEvent(
+      event.transaction.hash
+        .toHexString()
+        .concat('-')
+        .concat(BigInt.fromI32(burns.length).toString())
+    )
+    burn.transaction = transaction.id
+    burn.pair = pair.id
+    burn.liquidity = value
+    burn.timestamp = transaction.timestamp
+    burn.to = event.params.to
+    burn.sender = event.params.from
+    burn.needsComplete = true
+    burn.transaction = transaction.id
+    burn.save()
+
+    // TODO: Consider using .concat() for handling array updates to protect
+    // against unintended side effects for other code paths.
+    burns.push(burn.id)
+    transaction.burns = burns
+    transaction.save()
+  }
+
+}
+
 export function handleTransfer(event: Transfer): void {
   // ignore initial transfers for first adds
   if (event.params.to.toHexString() == ADDRESS_ZERO && event.params.value.equals(BigInt.fromI32(1000))) {
@@ -339,9 +438,9 @@ export function handleMint(event: Mint): void {
 
 export function handleMintSync(event: MintSync): void {
   log.error('Block number: {}, block hash: {}, transaction hash: {}', [
-    event.block.number.toString(), 
-    event.block.hash.toHexString(), 
-    event.transaction.hash.toHexString(), 
+    event.block.number.toString(),
+    event.block.hash.toHexString(),
+    event.transaction.hash.toHexString(),
   ])
   let transaction = Transaction.load(event.transaction.hash.toHexString())
   log.error('You got some transaction: {}', [transaction.entries.toString()])
