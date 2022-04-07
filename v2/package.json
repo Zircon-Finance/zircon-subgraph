@@ -6,7 +6,7 @@
   "scripts": {
     "codegen": "graph codegen --output-dir src/types/",
     "build": "graph build",
-    "deploy": "graph deploy --product hosted-service --access-token 0c3ce548b2cc45879014202022d1a044 --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/  reshyresh/zircon-finance"
+    "deploy": "graph deploy --product hosted-service --access-token 0c3ce548b2cc45879014202022d1a044 --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/  reshyresh/zircon-alpha"
   },
   "devDependencies": {
     "@graphprotocol/graph-cli": "^0.16.0",

@@ -1,5 +1,5 @@
 /* eslint-disable prefer-const */
-import { BigInt, BigDecimal, store, Address } from '@graphprotocol/graph-ts'
+import { BigInt, BigDecimal, store, Address, log } from '@graphprotocol/graph-ts'
 import {
   Pair,
   Token,
@@ -8,9 +8,14 @@ import {
   Mint as MintEvent,
   Burn as BurnEvent,
   Swap as SwapEvent,
-  Bundle
+  PylonMint,
+  PylonBurn,
+  Bundle,
+  Pylon,
+  ZirconFactory
 } from '../types/schema'
 import { Pair as PairContract, Mint, Burn, Swap, Transfer, Sync } from '..//types/templates/Pair/Pair'
+import { MintAsync, MintSync, MintAsync100, Burn as ZirconBurn, BurnAsync } from '../types/templates/Zircon/Zircon'
 import { updatePairDayData, updateTokenDayData, updateUniswapDayData, updatePairHourData } from './dayUpdates'
 import { getEthPriceInUSD, findEthPerToken, getTrackedVolumeUSD, getTrackedLiquidityUSD } from './pricing'
 import {
@@ -22,7 +27,8 @@ import {
   createLiquidityPosition,
   ZERO_BD,
   BI_18,
-  createLiquiditySnapshot
+  createLiquiditySnapshot,
+  PYLON_FACTORY
 } from './helpers'
 
 function isCompleteMint(mintId: string): boolean {
@@ -37,6 +43,7 @@ export function handleTransfer(event: Transfer): void {
 
   let factory = UniswapFactory.load(FACTORY_ADDRESS)
   let transactionHash = event.transaction.hash.toHexString()
+  log.warning('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA {}', [transactionHash])
 
   // user stats
   let from = event.params.from
@@ -330,6 +337,158 @@ export function handleMint(event: Mint): void {
   updateTokenDayData(token1 as Token, event)
 }
 
+export function handleMintSync(event: MintSync): void {
+  log.error('Block number: {}, block hash: {}, transaction hash: {}', [
+    event.block.number.toString(), 
+    event.block.hash.toHexString(), 
+    event.transaction.hash.toHexString(), 
+  ])
+  let transaction = Transaction.load(event.transaction.hash.toHexString())
+  log.error('You got some transaction: {}', [transaction.entries.toString()])
+  let mints = transaction.mints
+  log.error('Mints are: {}', [mints.toString()]);
+  let mint = PylonMint.load(mints![mints.length - 1])
+  log.error('Mint value: {}', [mint.transaction]);
+
+  let pylon = Pylon.load(event.address.toHex())
+  let zircon = ZirconFactory.load(PYLON_FACTORY)
+
+  let token0 = Token.load(pylon.token0)
+
+  // update exchange info (except balances, sync will cover that)
+  let token0Amount = convertTokenToDecimal(event.params.aIn0, token0.decimals)
+
+  // update txn counts
+  token0.txCount = token0.txCount.plus(ONE_BI)
+
+  // update txn counts
+  pylon.txCount = pylon.txCount.plus(ONE_BI)
+  zircon.txCount = zircon.txCount.plus(ONE_BI)
+
+  // save entities
+  token0.save()
+  pylon.save()
+  zircon.save()
+
+  mint.sender = event.params.sender
+  mint.amount0 = token0Amount as BigDecimal
+  mint.logIndex = event.logIndex
+  mint.sync = 'off'
+  mint.save()
+
+  // update the LP position
+  let liquidityPosition = createLiquidityPosition(event.address, mint.to as Address)
+  createLiquiditySnapshot(liquidityPosition, event)
+
+  // update day entities
+  updatePairDayData(event)
+  updatePairHourData(event)
+  updateUniswapDayData(event)
+  updateTokenDayData(token0 as Token, event)
+}
+
+export function handleMintAsync(event: MintAsync): void {
+  let transaction = Transaction.load(event.transaction.hash.toHexString())
+  let mints = transaction.mints
+  let mint = PylonMint.load(mints![mints.length - 1])
+
+  let pylon = Pylon.load(event.address.toHex())
+  let zircon = ZirconFactory.load(PYLON_FACTORY)
+
+  let token0 = Token.load(pylon.token0)
+  let token1 = Token.load(pylon.token1)
+
+  // update exchange info (except balances, sync will cover that)
+  let token0Amount = convertTokenToDecimal(event.params.aIn0, token0.decimals)
+  let token1Amount = convertTokenToDecimal(event.params.aIn1, token1.decimals)
+
+  // update txn counts
+  token0.txCount = token0.txCount.plus(ONE_BI)
+  token1.txCount = token1.txCount.plus(ONE_BI)
+
+  // get new amounts of USD and ETH for tracking
+  let bundle = Bundle.load('1')
+  let amountTotalUSD = token1.derivedETH
+    .times(token1Amount)
+    .plus(token0.derivedETH.times(token0Amount))
+    .times(bundle.ethPrice)
+
+  // update txn counts
+  pylon.txCount = pylon.txCount.plus(ONE_BI)
+  zircon.txCount = zircon.txCount.plus(ONE_BI)
+
+  // save entities
+  token0.save()
+  token1.save()
+  pylon.save()
+  zircon.save()
+
+  mint.sender = event.params.sender
+  mint.amount0 = token0Amount as BigDecimal
+  mint.amount1 = token1Amount as BigDecimal
+  mint.logIndex = event.logIndex
+  mint.amountUSD = amountTotalUSD as BigDecimal
+  mint.sync = 'half'
+  mint.save()
+
+  // update the LP position
+  let liquidityPosition = createLiquidityPosition(event.address, mint.to as Address)
+  createLiquiditySnapshot(liquidityPosition, event)
+
+  // update day entities
+  updatePairDayData(event)
+  updatePairHourData(event)
+  updateUniswapDayData(event)
+  updateTokenDayData(token0 as Token, event)
+  updateTokenDayData(token1 as Token, event)
+}
+
+export function handleMintAsync100(event: MintAsync100): void {
+  let transaction = Transaction.load(event.transaction.hash.toHexString())
+  let mints = transaction.mints
+  let mint = PylonMint.load(mints![mints.length - 1])
+
+  let pylon = Pylon.load(event.address.toHex())
+  let zircon = ZirconFactory.load(PYLON_FACTORY)
+
+  let token0 = Token.load(pylon.token0)
+  let token1 = Token.load(pylon.token1)
+
+  // update exchange info (except balances, sync will cover that)
+  let token0Amount = convertTokenToDecimal(event.params.aIn0, token0.decimals)
+
+  // update txn counts
+  token0.txCount = token0.txCount.plus(ONE_BI)
+  token1.txCount = token1.txCount.plus(ONE_BI)
+
+  // update txn counts
+  pylon.txCount = pylon.txCount.plus(ONE_BI)
+  zircon.txCount = zircon.txCount.plus(ONE_BI)
+
+  // save entities
+  token0.save()
+  token1.save()
+  pylon.save()
+  zircon.save()
+
+  mint.sender = event.params.sender
+  mint.amount0 = token0Amount as BigDecimal
+  mint.logIndex = event.logIndex
+  mint.sync = 'full'
+  mint.save()
+
+  // update the LP position
+  let liquidityPosition = createLiquidityPosition(event.address, mint.to as Address)
+  createLiquiditySnapshot(liquidityPosition, event)
+
+  // update day entities
+  updatePairDayData(event)
+  updatePairHourData(event)
+  updateUniswapDayData(event)
+  updateTokenDayData(token0 as Token, event)
+  updateTokenDayData(token1 as Token, event)
+}
+
 export function handleBurn(event: Burn): void {
   let transaction = Transaction.load(event.transaction.hash.toHexString())
 
@@ -378,6 +537,122 @@ export function handleBurn(event: Burn): void {
   // burn.to = event.params.to
   burn.logIndex = event.logIndex
   burn.amountUSD = amountTotalUSD as BigDecimal
+  burn.save()
+
+  // update the LP position
+  let liquidityPosition = createLiquidityPosition(event.address, burn.sender as Address)
+  createLiquiditySnapshot(liquidityPosition, event)
+
+  // update day entities
+  updatePairDayData(event)
+  updatePairHourData(event)
+  updateUniswapDayData(event)
+  updateTokenDayData(token0 as Token, event)
+  updateTokenDayData(token1 as Token, event)
+}
+
+export function handlePylonBurn(event: ZirconBurn): void {
+  let transaction = Transaction.load(event.transaction.hash.toHexString())
+
+  // safety check
+  if (transaction === null) {
+    return
+  }
+
+  let burns = transaction.burns
+  let burn = PylonBurn.load(burns![burns.length - 1])
+
+  let pylon = Pylon.load(event.address.toHex())
+  let zircon = ZirconFactory.load(PYLON_FACTORY)
+
+  let token0 = Token.load(pylon.token0)
+  let token1 = Token.load(pylon.token1)
+  let token0Amount = convertTokenToDecimal(event.params.aIn0, token0.decimals)
+
+  // update txn counts
+  token0.txCount = token0.txCount.plus(ONE_BI)
+  token1.txCount = token1.txCount.plus(ONE_BI)
+
+  // get new amounts of USD and ETH for tracking
+
+  // update txn counts
+  zircon.txCount = zircon.txCount.plus(ONE_BI)
+  pylon.txCount = pylon.txCount.plus(ONE_BI)
+
+  // update global counter and save
+  token0.save()
+  token1.save()
+  pylon.save()
+  zircon.save()
+
+  // update burn
+  // burn.sender = event.params.sender
+  burn.amount0 = token0Amount as BigDecimal
+  // burn.to = event.params.to
+  burn.logIndex = event.logIndex
+  burn.sync = 'off'
+  burn.save()
+
+  // update the LP position
+  let liquidityPosition = createLiquidityPosition(event.address, burn.sender as Address)
+  createLiquiditySnapshot(liquidityPosition, event)
+
+  // update day entities
+  updatePairDayData(event)
+  updatePairHourData(event)
+  updateUniswapDayData(event)
+  updateTokenDayData(token0 as Token, event)
+  updateTokenDayData(token1 as Token, event)
+}
+
+export function handlePylonBurnAsync(event: BurnAsync): void {
+  let transaction = Transaction.load(event.transaction.hash.toHexString())
+
+  // safety check
+  if (transaction === null) {
+    return
+  }
+
+  let burns = transaction.burns
+  let burn = PylonBurn.load(burns![burns.length - 1])
+
+  let pylon = Pylon.load(event.address.toHex())
+  let zircon = ZirconFactory.load(PYLON_FACTORY)
+
+  let token0 = Token.load(pylon.token0)
+  let token1 = Token.load(pylon.token1)
+  let token0Amount = convertTokenToDecimal(event.params.aIn0, token0.decimals)
+  let token1Amount = convertTokenToDecimal(event.params.aIn1, token1.decimals)
+
+  // update txn counts
+  token0.txCount = token0.txCount.plus(ONE_BI)
+  token1.txCount = token1.txCount.plus(ONE_BI)
+
+  // get new amounts of USD and ETH for tracking
+  let bundle = Bundle.load('1')
+  let amountTotalUSD = token1.derivedETH
+    .times(token1Amount)
+    .plus(token0.derivedETH.times(token0Amount))
+    .times(bundle.ethPrice)
+
+  // update txn counts
+  zircon.txCount = zircon.txCount.plus(ONE_BI)
+  pylon.txCount = pylon.txCount.plus(ONE_BI)
+
+  // update global counter and save
+  token0.save()
+  token1.save()
+  pylon.save()
+  zircon.save()
+
+  // update burn
+  // burn.sender = event.params.sender
+  burn.amount0 = token0Amount as BigDecimal
+  burn.amount1 = token1Amount as BigDecimal
+  // burn.to = event.params.to
+  burn.logIndex = event.logIndex
+  burn.amountUSD = amountTotalUSD as BigDecimal
+  burn.sync = 'half'
   burn.save()
 
   // update the LP position

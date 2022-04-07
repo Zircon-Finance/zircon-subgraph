@@ -31,6 +31,29 @@ dataSources:
       eventHandlers:
         - event: PairCreated(indexed address,indexed address,address,uint256)
           handler: handleNewPair
+  - kind: ethereum
+    name: ZirconPylonFactory
+    network: mbase
+    source:
+      address: "0x43141489F8b4EB2AeAdA992D1016777B16C7C4ca"
+      abi: ZirconPylonFactory
+      startBlock: 1905618
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.3
+      language: wasm/assemblyscript
+      entities:
+        - PoolTokenCreated
+        - PylonCreated
+      abis:
+        - name: ZirconPylonFactory
+          file: ../abis/ZirconPylonFactory.json
+      eventHandlers:
+        # - event: PoolTokenCreated(indexed address,address)
+        #   handler: handlePoolTokenCreated
+        - event: PylonCreated(indexed address,indexed address,address)
+          handler: handlePylonCreated
+      file: ./src/mappings/factory.ts
 templates:
   - kind: ethereum/contract
     name: Pair
@@ -61,3 +84,32 @@ templates:
           handler: handleTransfer
         - event: Sync(uint112,uint112)
           handler: handleSync
+  - kind: ethereum/contract
+    name: Zircon
+    network: mbase
+    source:
+      abi: Zircon
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.3
+      language: wasm/assemblyscript
+      file: ./src/mappings/core.ts
+      entities:
+        - Pair
+        - Token
+      abis:
+        - name: Zircon
+          file: ../abis/ZirconPylonSyncs.json
+        - name: Factory
+          file: ../abis/ZirconPylonFactory.json
+      eventHandlers:
+        - event: MintSync(address,uint256)
+          handler: handleMintSync
+        - event: MintAsync(address,uint256,uint256)
+          handler: handleMintAsync
+        - event: MintAsync100(address,uint256)
+          handler: handleMintAsync100
+        - event: Burn(address,uint256)
+          handler: handlePylonBurn
+        - event: BurnAsync(address,uint256,uint256)
+          handler: handlePylonBurnAsync

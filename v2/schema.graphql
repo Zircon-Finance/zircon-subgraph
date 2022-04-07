@@ -20,6 +20,17 @@ type UniswapFactory @entity {
   txCount: BigInt!
 }
 
+type ZirconFactory @entity {
+  # factory address
+  id: ID!
+
+  # pylon info
+  pylonCount: BigInt!
+
+  # transactions
+  txCount: BigInt!
+}
+
 type Token @entity {
   # token address
   id: ID!
@@ -97,6 +108,18 @@ type Pair @entity {
   swaps: [Swap!]! @derivedFrom(field: "pair")
 }
 
+type Pylon @entity {
+  id: ID!
+
+  token0: Token!
+  token1: Token!
+  pairId: Bytes!
+  txCount: BigInt
+
+  createdAtTimestamp: BigInt!
+  createdAtBlockNumber: BigInt!
+}
+
 type User @entity {
   id: ID!
   liquidityPositions: [LiquidityPosition!] @derivedFrom(field: "user")
@@ -162,6 +185,30 @@ type Mint @entity {
   feeLiquidity: BigDecimal
 }
 
+type PylonMint @entity {
+  id: ID!
+  transaction: Transaction!
+  timestamp: BigInt! 
+  pylon: Bytes!
+
+  # populated from the primary Transfer event
+  to: Bytes!
+  liquidity: BigDecimal!
+
+  # populated from the Mint event
+  sender: Bytes
+  amount0: BigDecimal
+  amount1: BigDecimal
+  logIndex: BigInt
+  # derived amount based on available prices of tokens
+  amountUSD: BigDecimal
+  sync: String
+
+  # optional fee fields, if a Transfer event is fired in _mintFee
+  feeTo: Bytes
+  feeLiquidity: BigDecimal
+}
+
 type Burn @entity {
   # transaction hash + "-" + index in mints Transaction array
   id: ID!
@@ -187,6 +234,34 @@ type Burn @entity {
   # optional fee fields, if a Transfer event is fired in _mintFee
   feeTo: Bytes
   feeLiquidity: BigDecimal
+}
+
+type PylonBurn @entity {
+  # transaction hash + "-" + index in mints Transaction array
+  id: ID!
+  transaction: Transaction!
+  timestamp: BigInt! # need this to pull recent txns for specific token or pair
+  pair: Pair!
+
+  # populated from the primary Transfer event
+  liquidity: BigDecimal!
+
+  # populated from the Burn event
+  sender: Bytes
+  amount0: BigDecimal
+  amount1: BigDecimal
+  to: Bytes
+  logIndex: BigInt
+  # derived amount based on available prices of tokens
+  amountUSD: BigDecimal
+
+  # mark uncomplete in ETH case
+  needsComplete: Boolean!
+
+  # optional fee fields, if a Transfer event is fired in _mintFee
+  feeTo: Bytes
+  feeLiquidity: BigDecimal
+  sync: String
 }
 
 type Swap @entity {

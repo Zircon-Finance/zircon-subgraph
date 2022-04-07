@@ -7,3 +7,9 @@ export class Pair extends DataSourceTemplate {
     DataSourceTemplate.create("Pair", [address.toHex()]);
   }
 }
+
+export class Zircon extends DataSourceTemplate {
+  static create(address: Address): void {
+    DataSourceTemplate.create("Zircon", [address.toHex()]);
+  }
+}
