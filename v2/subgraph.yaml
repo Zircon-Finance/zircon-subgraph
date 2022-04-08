@@ -8,9 +8,9 @@ dataSources:
     name: Factory
     network: mbase
     source:
-      address: '0x3d881F264eD17483926621AC409299fD8E478924'
+      address: '0x8B3ca22Cd739D893732dffe867F85C2dB99bD848'
       abi: Factory
-      startBlock: 1905618
+      startBlock: 1963300
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.3
@@ -35,9 +35,9 @@ dataSources:
     name: ZirconPylonFactory
     network: mbase
     source:
-      address: "0x43141489F8b4EB2AeAdA992D1016777B16C7C4ca"
+      address: "0xF6f420104ff5e514Dd9d439A60A794C440fa4742"
       abi: ZirconPylonFactory
-      startBlock: 1905618
+      startBlock: 1963300
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.3
@@ -95,12 +95,12 @@ templates:
       language: wasm/assemblyscript
       file: ./src/mappings/core.ts
       entities:
-        - Pair
+        - Pylon
         - Token
       abis:
         - name: Zircon
-          file: ../abis/ZirconPylonSyncs.json
-        - name: Factory
+          file: ../abis/ZirconPylon.json
+        - name: PylonFactory
           file: ../abis/ZirconPylonFactory.json
       eventHandlers:
         - event: MintSync(address,uint256)
@@ -113,3 +113,23 @@ templates:
           handler: handlePylonBurn
         - event: BurnAsync(address,uint256,uint256)
           handler: handlePylonBurnAsync
+  - kind: ethereum/contract
+    name: ZirconPoolToken
+    network: mbase
+    source:
+      abi: ZirconPoolToken
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.3
+      language: wasm/assemblyscript
+      file: ./src/mappings/core.ts
+      entities:
+        - ZirconPoolToken
+      abis:
+        - name: ZirconPoolToken
+          file: ../abis/ZirconPoolToken.json
+        - name: PylonFactory
+          file: ../abis/ZirconPylonFactory.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransferPoolTokens

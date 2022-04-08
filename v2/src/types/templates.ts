@@ -13,3 +13,9 @@ export class Zircon extends DataSourceTemplate {
     DataSourceTemplate.create("Zircon", [address.toHex()]);
   }
 }
+
+export class ZirconPoolToken extends DataSourceTemplate {
+  static create(address: Address): void {
+    DataSourceTemplate.create("ZirconPoolToken", [address.toHex()]);
+  }
+}

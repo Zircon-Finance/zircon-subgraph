@@ -118,6 +118,7 @@ export function handleNewPair(event: PairCreated): void {
 
 export function handlePylonCreated(event: PylonCreated): void {
   // load factory (create if first exchange)
+  log.warning('Calling handlePylonCreated {}', ['Working'])
   let factory = ZirconFactory.load(PYLON_FACTORY)
   if (factory === null) {
     factory = new ZirconFactory(FACTORY_ADDRESS)
@@ -134,7 +135,9 @@ export function handlePylonCreated(event: PylonCreated): void {
 
   // create the tokens
   let token0 = Token.load(event.params.token0.toHexString())
+  log.warning('Calling handlePylonCreated for token {}', [token0.name])
   let token1 = Token.load(event.params.token1.toHexString())
+  log.warning('Calling handlePylonCreated for token {}', [token1.name])
 
   // fetch info if null
   if (token0 === null) {

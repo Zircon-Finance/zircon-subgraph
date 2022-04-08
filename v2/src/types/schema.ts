@@ -932,6 +932,82 @@ export class LiquidityPositionSnapshot extends Entity {
   }
 }
 
+export class ZirconPoolToken extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id !== null, "Cannot save ZirconPoolToken entity without an ID");
+    assert(
+      id.kind == ValueKind.STRING,
+      "Cannot save ZirconPoolToken entity with non-string ID. " +
+        'Considering using .toHex() to convert the "id" to a string.'
+    );
+    store.set("ZirconPoolToken", id.toString(), this);
+  }
+
+  static load(id: string): ZirconPoolToken | null {
+    return store.get("ZirconPoolToken", id) as ZirconPoolToken | null;
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get token(): Bytes {
+    let value = this.get("token");
+    return value.toBytes();
+  }
+
+  set token(value: Bytes) {
+    this.set("token", Value.fromBytes(value));
+  }
+
+  get pair(): Bytes {
+    let value = this.get("pair");
+    return value.toBytes();
+  }
+
+  set pair(value: Bytes) {
+    this.set("pair", Value.fromBytes(value));
+  }
+
+  get isAnchor(): boolean {
+    let value = this.get("isAnchor");
+    return value.toBoolean();
+  }
+
+  set isAnchor(value: boolean) {
+    this.set("isAnchor", Value.fromBoolean(value));
+  }
+
+  get factory(): Bytes {
+    let value = this.get("factory");
+    return value.toBytes();
+  }
+
+  set factory(value: Bytes) {
+    this.set("factory", Value.fromBytes(value));
+  }
+
+  get pylon(): Bytes {
+    let value = this.get("pylon");
+    return value.toBytes();
+  }
+
+  set pylon(value: Bytes) {
+    this.set("pylon", Value.fromBytes(value));
+  }
+}
+
 export class Transaction extends Entity {
   constructor(id: string) {
     super();
@@ -1028,6 +1104,89 @@ export class Transaction extends Entity {
       this.unset("swaps");
     } else {
       this.set("swaps", Value.fromStringArray(value as Array<string>));
+    }
+  }
+}
+
+export class PylonTransaction extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id !== null, "Cannot save PylonTransaction entity without an ID");
+    assert(
+      id.kind == ValueKind.STRING,
+      "Cannot save PylonTransaction entity with non-string ID. " +
+        'Considering using .toHex() to convert the "id" to a string.'
+    );
+    store.set("PylonTransaction", id.toString(), this);
+  }
+
+  static load(id: string): PylonTransaction | null {
+    return store.get("PylonTransaction", id) as PylonTransaction | null;
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get blockNumber(): BigInt {
+    let value = this.get("blockNumber");
+    return value.toBigInt();
+  }
+
+  set blockNumber(value: BigInt) {
+    this.set("blockNumber", Value.fromBigInt(value));
+  }
+
+  get timestamp(): BigInt {
+    let value = this.get("timestamp");
+    return value.toBigInt();
+  }
+
+  set timestamp(value: BigInt) {
+    this.set("timestamp", Value.fromBigInt(value));
+  }
+
+  get mints(): Array<string> | null {
+    let value = this.get("mints");
+    if (value === null) {
+      return null;
+    } else {
+      return value.toStringArray();
+    }
+  }
+
+  set mints(value: Array<string> | null) {
+    if (value === null) {
+      this.unset("mints");
+    } else {
+      this.set("mints", Value.fromStringArray(value as Array<string>));
+    }
+  }
+
+  get burns(): Array<string> | null {
+    let value = this.get("burns");
+    if (value === null) {
+      return null;
+    } else {
+      return value.toStringArray();
+    }
+  }
+
+  set burns(value: Array<string> | null) {
+    if (value === null) {
+      this.unset("burns");
+    } else {
+      this.set("burns", Value.fromStringArray(value as Array<string>));
     }
   }
 }
@@ -1275,13 +1434,13 @@ export class PylonMint extends Entity {
     this.set("timestamp", Value.fromBigInt(value));
   }
 
-  get pylon(): Bytes {
-    let value = this.get("pylon");
+  get pair(): Bytes {
+    let value = this.get("pair");
     return value.toBytes();
   }
 
-  set pylon(value: Bytes) {
-    this.set("pylon", Value.fromBytes(value));
+  set pair(value: Bytes) {
+    this.set("pair", Value.fromBytes(value));
   }
 
   get to(): Bytes {
@@ -1699,13 +1858,13 @@ export class PylonBurn extends Entity {
     this.set("timestamp", Value.fromBigInt(value));
   }
 
-  get pair(): string {
+  get pair(): Bytes {
     let value = this.get("pair");
-    return value.toString();
+    return value.toBytes();
   }
 
-  set pair(value: string) {
-    this.set("pair", Value.fromString(value));
+  set pair(value: Bytes) {
+    this.set("pair", Value.fromBytes(value));
   }
 
   get liquidity(): BigDecimal {

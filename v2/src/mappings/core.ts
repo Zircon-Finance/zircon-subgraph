@@ -12,10 +12,13 @@ import {
   PylonBurn,
   Bundle,
   Pylon,
-  ZirconFactory
+  ZirconFactory,
+  PylonTransaction,
+  ZirconPoolToken
 } from '../types/schema'
 import { Pair as PairContract, Mint, Burn, Swap, Transfer, Sync } from '..//types/templates/Pair/Pair'
 import { MintAsync, MintSync, MintAsync100, Burn as ZirconBurn, BurnAsync } from '../types/templates/Zircon/Zircon'
+import { Transfer as PylonTransfer } from '../types/templates/Zircon/ZirconPoolToken'
 import { updatePairDayData, updateTokenDayData, updateUniswapDayData, updatePairHourData } from './dayUpdates'
 import { getEthPriceInUSD, findEthPerToken, getTrackedVolumeUSD, getTrackedLiquidityUSD } from './pricing'
 import {
@@ -38,16 +41,16 @@ function isCompleteMint(mintId: string): boolean {
 // TODO: Import ZirconPoolToken ABI
 //
 
-export function handleTransferPoolTokens(event: Transfer): void {
+export function handleTransferPoolTokens(event: PylonTransfer): void {
   // Mint
+  log.warning('PYLON TRANSFER SUCCESFULLY {}', ['called'])
   if (event.params.to.toHexString() == ADDRESS_ZERO && event.params.value.equals(BigInt.fromI32(1000))) {
     return
   }
 
   let factory = ZirconFactory.load(PYLON_FACTORY) //TODO: Pylon Factory
   let transactionHash = event.transaction.hash.toHexString()
-  log.warning('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA {}', [transactionHash])
-
+  
   // user stats
   let from = event.params.from
   createUser(from)
@@ -56,17 +59,17 @@ export function handleTransferPoolTokens(event: Transfer): void {
 
   // get pair and load contract
   //TODO: PoolToken Load
-  let pair = Pair.load(event.address.toHexString())
-  let pairContract = PairContract.bind(event.address)
+  let poolToken = ZirconPoolToken.load(event.address.toHexString())
+  // let pairContract = pylon.pairId
 
 
   // liquidity token amount being transfered
   let value = convertTokenToDecimal(event.params.value, BI_18)
 
   // get or create transaction
-  let transaction = Transaction.load(transactionHash)
+  let transaction = PylonTransaction.load(transactionHash)
   if (transaction === null) {
-    transaction = new Transaction(transactionHash)
+    transaction = new PylonTransaction(transactionHash)
     transaction.blockNumber = event.block.number
     transaction.timestamp = event.block.timestamp
     transaction.mints = []
@@ -77,19 +80,17 @@ export function handleTransferPoolTokens(event: Transfer): void {
   let mints = transaction.mints
   if (from.toHexString() == ADDRESS_ZERO) {
     // update total supply
-    pair.totalSupply = pair.totalSupply.plus(value)
-    pair.save()
 
     // create new mint if no mints so far or if last one is done already
     if (mints.length === 0 || isCompleteMint(mints![mints.length - 1])) {
-      let mint = new MintEvent(
+      let mint = new PylonMint(
         event.transaction.hash
           .toHexString()
           .concat('-')
           .concat(BigInt.fromI32(mints.length).toString())
       )
       mint.transaction = transaction.id
-      mint.pair = pair.id //TODO: Pair id
+      mint.pair = poolToken.pair //TODO: Pair id
       mint.to = to
       mint.liquidity = value
       mint.timestamp = transaction.timestamp
@@ -107,16 +108,16 @@ export function handleTransferPoolTokens(event: Transfer): void {
 
   // case where direct send first on ETH withdrawls
   //TODO: Change pair to pylon
-  if (event.params.to.toHexString() == pair.id) {
+  if (event.params.to.toHexString() == poolToken.id) {
     let burns = transaction.burns
-    let burn = new BurnEvent(
+    let burn = new PylonBurn(
       event.transaction.hash
         .toHexString()
         .concat('-')
         .concat(BigInt.fromI32(burns.length).toString())
     )
     burn.transaction = transaction.id
-    burn.pair = pair.id
+    burn.pair = poolToken.pair
     burn.liquidity = value
     burn.timestamp = transaction.timestamp
     burn.to = event.params.to
@@ -142,7 +143,7 @@ export function handleTransfer(event: Transfer): void {
 
   let factory = UniswapFactory.load(FACTORY_ADDRESS)
   let transactionHash = event.transaction.hash.toHexString()
-  log.warning('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA {}', [transactionHash])
+  log.warning('CALLED NORMAL TRANSFER EVENT FOR TX {}', [transactionHash])
 
   // user stats
   let from = event.params.from
@@ -442,7 +443,7 @@ export function handleMintSync(event: MintSync): void {
     event.block.hash.toHexString(),
     event.transaction.hash.toHexString(),
   ])
-  let transaction = Transaction.load(event.transaction.hash.toHexString())
+  let transaction = PylonTransaction.load(event.transaction.hash.toHexString())
   log.error('You got some transaction: {}', [transaction.entries.toString()])
   let mints = transaction.mints
   log.error('Mints are: {}', [mints.toString()]);
@@ -487,14 +488,20 @@ export function handleMintSync(event: MintSync): void {
 }
 
 export function handleMintAsync(event: MintAsync): void {
-  let transaction = Transaction.load(event.transaction.hash.toHexString())
+  let transaction = PylonTransaction.load(event.transaction.hash.toHexString())
+  log.warning('Transaction hash for mint async: {}', [event.transaction.hash.toHexString()])
   let mints = transaction.mints
+  log.warning('Mints: {}', mints!)
   let mint = PylonMint.load(mints![mints.length - 1])
+  log.warning('Last mint: {}', [mint.id])
 
   let pylon = Pylon.load(event.address.toHex())
+  log.warning('Pylon is: {}', [pylon.pairId.toHexString()])
   let zircon = ZirconFactory.load(PYLON_FACTORY)
+  log.warning('Zircon factory is: {}', [zircon.txCount.toString()])
 
   let token0 = Token.load(pylon.token0)
+  log.warning('Token 0 is: {}', [token0.id])
   let token1 = Token.load(pylon.token1)
 
   // update exchange info (except balances, sync will cover that)
@@ -543,7 +550,7 @@ export function handleMintAsync(event: MintAsync): void {
 }
 
 export function handleMintAsync100(event: MintAsync100): void {
-  let transaction = Transaction.load(event.transaction.hash.toHexString())
+  let transaction = PylonTransaction.load(event.transaction.hash.toHexString())
   let mints = transaction.mints
   let mint = PylonMint.load(mints![mints.length - 1])
 
@@ -651,7 +658,7 @@ export function handleBurn(event: Burn): void {
 }
 
 export function handlePylonBurn(event: ZirconBurn): void {
-  let transaction = Transaction.load(event.transaction.hash.toHexString())
+  let transaction = PylonTransaction.load(event.transaction.hash.toHexString())
 
   // safety check
   if (transaction === null) {
@@ -705,7 +712,7 @@ export function handlePylonBurn(event: ZirconBurn): void {
 }
 
 export function handlePylonBurnAsync(event: BurnAsync): void {
-  let transaction = Transaction.load(event.transaction.hash.toHexString())
+  let transaction = PylonTransaction.load(event.transaction.hash.toHexString())
 
   // safety check
   if (transaction === null) {

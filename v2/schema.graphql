@@ -150,6 +150,15 @@ type LiquidityPositionSnapshot @entity {
   liquidityTokenBalance: BigDecimal! # snapshot of users pool token balance
 }
 
+type ZirconPoolToken @entity {
+  id: ID!
+  token: Bytes!
+  pair: Bytes!
+  isAnchor: Boolean!
+  factory: Bytes!
+  pylon: Bytes!
+}
+
 type Transaction @entity {
   id: ID! # txn hash
   blockNumber: BigInt!
@@ -159,6 +168,16 @@ type Transaction @entity {
   mints: [Mint!]
   burns: [Burn!]
   swaps: [Swap!]
+}
+
+type PylonTransaction @entity {
+  id: ID! # txn hash
+  blockNumber: BigInt!
+  timestamp: BigInt!
+  # This is not the reverse of Mint.transaction; it is only used to
+  # track incomplete mints (similar for burns and swaps)
+  mints: [Mint!]
+  burns: [Burn!]
 }
 
 type Mint @entity {
@@ -189,7 +208,7 @@ type PylonMint @entity {
   id: ID!
   transaction: Transaction!
   timestamp: BigInt! 
-  pylon: Bytes!
+  pair: Bytes!
 
   # populated from the primary Transfer event
   to: Bytes!
@@ -241,7 +260,7 @@ type PylonBurn @entity {
   id: ID!
   transaction: Transaction!
   timestamp: BigInt! # need this to pull recent txns for specific token or pair
-  pair: Pair!
+  pair: Bytes!
 
   # populated from the primary Transfer event
   liquidity: BigDecimal!
