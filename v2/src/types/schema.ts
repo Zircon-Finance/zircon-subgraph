@@ -932,7 +932,7 @@ export class LiquidityPositionSnapshot extends Entity {
   }
 }
 
-export class ZirconPoolToken extends Entity {
+export class ZirconPoolTokenEntity extends Entity {
   constructor(id: string) {
     super();
     this.set("id", Value.fromString(id));
@@ -940,17 +940,23 @@ export class ZirconPoolToken extends Entity {
 
   save(): void {
     let id = this.get("id");
-    assert(id !== null, "Cannot save ZirconPoolToken entity without an ID");
+    assert(
+      id !== null,
+      "Cannot save ZirconPoolTokenEntity entity without an ID"
+    );
     assert(
       id.kind == ValueKind.STRING,
-      "Cannot save ZirconPoolToken entity with non-string ID. " +
+      "Cannot save ZirconPoolTokenEntity entity with non-string ID. " +
         'Considering using .toHex() to convert the "id" to a string.'
     );
-    store.set("ZirconPoolToken", id.toString(), this);
+    store.set("ZirconPoolTokenEntity", id.toString(), this);
   }
 
-  static load(id: string): ZirconPoolToken | null {
-    return store.get("ZirconPoolToken", id) as ZirconPoolToken | null;
+  static load(id: string): ZirconPoolTokenEntity | null {
+    return store.get(
+      "ZirconPoolTokenEntity",
+      id
+    ) as ZirconPoolTokenEntity | null;
   }
 
   get id(): string {
@@ -962,13 +968,13 @@ export class ZirconPoolToken extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get token(): Bytes {
+  get token(): string {
     let value = this.get("token");
-    return value.toBytes();
+    return value.toString();
   }
 
-  set token(value: Bytes) {
-    this.set("token", Value.fromBytes(value));
+  set token(value: string) {
+    this.set("token", Value.fromString(value));
   }
 
   get pair(): Bytes {
@@ -1005,6 +1011,24 @@ export class ZirconPoolToken extends Entity {
 
   set pylon(value: Bytes) {
     this.set("pylon", Value.fromBytes(value));
+  }
+
+  get createdAtTimestamp(): BigInt {
+    let value = this.get("createdAtTimestamp");
+    return value.toBigInt();
+  }
+
+  set createdAtTimestamp(value: BigInt) {
+    this.set("createdAtTimestamp", Value.fromBigInt(value));
+  }
+
+  get createdAtBlockNumber(): BigInt {
+    let value = this.get("createdAtBlockNumber");
+    return value.toBigInt();
+  }
+
+  set createdAtBlockNumber(value: BigInt) {
+    this.set("createdAtBlockNumber", Value.fromBigInt(value));
   }
 }
 

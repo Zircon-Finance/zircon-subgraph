@@ -28,12 +28,24 @@ export class PoolTokenCreated__Params {
     this._event = event;
   }
 
-  get token0(): Address {
+  get token(): Address {
     return this._event.parameters[0].value.toAddress();
   }
 
   get poolToken(): Address {
     return this._event.parameters[1].value.toAddress();
+  }
+
+  get pylon(): Address {
+    return this._event.parameters[2].value.toAddress();
+  }
+
+  get pair(): Address {
+    return this._event.parameters[3].value.toAddress();
+  }
+
+  get isAnchor(): boolean {
+    return this._event.parameters[4].value.toBoolean();
   }
 }
 

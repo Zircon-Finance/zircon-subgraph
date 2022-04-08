@@ -14,7 +14,7 @@ import {
   Pylon,
   ZirconFactory,
   PylonTransaction,
-  ZirconPoolToken
+  ZirconPoolTokenEntity
 } from '../types/schema'
 import { Pair as PairContract, Mint, Burn, Swap, Transfer, Sync } from '..//types/templates/Pair/Pair'
 import { MintAsync, MintSync, MintAsync100, Burn as ZirconBurn, BurnAsync } from '../types/templates/Zircon/Zircon'
@@ -59,7 +59,7 @@ export function handleTransferPoolTokens(event: PylonTransfer): void {
 
   // get pair and load contract
   //TODO: PoolToken Load
-  let poolToken = ZirconPoolToken.load(event.address.toHexString())
+  let poolToken = ZirconPoolTokenEntity.load(event.address.toHexString())
   // let pairContract = pylon.pairId
 
 
@@ -438,13 +438,13 @@ export function handleMint(event: Mint): void {
 }
 
 export function handleMintSync(event: MintSync): void {
-  log.error('Block number: {}, block hash: {}, transaction hash: {}', [
+  log.error('Calling handle mint Sync at Block number: {}, block hash: {}, transaction hash: {}', [
     event.block.number.toString(),
     event.block.hash.toHexString(),
     event.transaction.hash.toHexString(),
   ])
   let transaction = PylonTransaction.load(event.transaction.hash.toHexString())
-  log.error('You got some transaction: {}', [transaction.entries.toString()])
+  log.error('Transaction fro handle mint sync: {}', [transaction.id])
   let mints = transaction.mints
   log.error('Mints are: {}', [mints.toString()]);
   let mint = PylonMint.load(mints![mints.length - 1])

@@ -10,7 +10,7 @@ dataSources:
     source:
       address: '0x8B3ca22Cd739D893732dffe867F85C2dB99bD848'
       abi: Factory
-      startBlock: 1963300
+      startBlock: 1968094
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.3
@@ -37,7 +37,7 @@ dataSources:
     source:
       address: "0xF6f420104ff5e514Dd9d439A60A794C440fa4742"
       abi: ZirconPylonFactory
-      startBlock: 1963300
+      startBlock: 1968094
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.3
@@ -49,8 +49,8 @@ dataSources:
         - name: ZirconPylonFactory
           file: ../abis/ZirconPylonFactory.json
       eventHandlers:
-        # - event: PoolTokenCreated(indexed address,address)
-        #   handler: handlePoolTokenCreated
+        - event: PoolTokenCreated(address indexed token, address poolToken, address pylon, address pair, bool isAnchor);
+          handler: handlePoolTokenCreated
         - event: PylonCreated(indexed address,indexed address,address)
           handler: handlePylonCreated
       file: ./src/mappings/factory.ts
@@ -103,13 +103,13 @@ templates:
         - name: PylonFactory
           file: ../abis/ZirconPylonFactory.json
       eventHandlers:
-        - event: MintSync(address,uint256)
+        - event: MintSync(address,uint256,bool)
           handler: handleMintSync
         - event: MintAsync(address,uint256,uint256)
           handler: handleMintAsync
-        - event: MintAsync100(address,uint256)
+        - event: MintAsync100(address,uint256,bool)
           handler: handleMintAsync100
-        - event: Burn(address,uint256)
+        - event: Burn(address,uint256,bool)
           handler: handlePylonBurn
         - event: BurnAsync(address,uint256,uint256)
           handler: handlePylonBurnAsync
@@ -128,8 +128,6 @@ templates:
       abis:
         - name: ZirconPoolToken
           file: ../abis/ZirconPoolToken.json
-        - name: PylonFactory
-          file: ../abis/ZirconPylonFactory.json
       eventHandlers:
         - event: Transfer(indexed address,indexed address,uint256)
           handler: handleTransferPoolTokens

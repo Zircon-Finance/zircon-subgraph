@@ -150,13 +150,15 @@ type LiquidityPositionSnapshot @entity {
   liquidityTokenBalance: BigDecimal! # snapshot of users pool token balance
 }
 
-type ZirconPoolToken @entity {
+type ZirconPoolTokenEntity @entity {
   id: ID!
-  token: Bytes!
+  token: String!
   pair: Bytes!
   isAnchor: Boolean!
   factory: Bytes!
   pylon: Bytes!
+  createdAtTimestamp: BigInt!
+  createdAtBlockNumber: BigInt!
 }
 
 type Transaction @entity {

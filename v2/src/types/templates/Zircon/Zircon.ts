@@ -35,6 +35,10 @@ export class Burn__Params {
   get aIn0(): BigInt {
     return this._event.parameters[1].value.toBigInt();
   }
+
+  get isAnchor(): boolean {
+    return this._event.parameters[2].value.toBoolean();
+  }
 }
 
 export class BurnAsync extends EthereumEvent {
@@ -131,6 +135,10 @@ export class MintAsync100__Params {
   get aIn0(): BigInt {
     return this._event.parameters[1].value.toBigInt();
   }
+
+  get isAnchor(): boolean {
+    return this._event.parameters[2].value.toBoolean();
+  }
 }
 
 export class MintSync extends EthereumEvent {
@@ -152,6 +160,10 @@ export class MintSync__Params {
 
   get aIn0(): BigInt {
     return this._event.parameters[1].value.toBigInt();
+  }
+
+  get isAnchor(): boolean {
+    return this._event.parameters[2].value.toBoolean();
   }
 }
 
