@@ -43,8 +43,10 @@ dataSources:
       apiVersion: 0.0.3
       language: wasm/assemblyscript
       entities:
-        - PoolTokenCreated
-        - PylonCreated
+        - ZirconPoolTokenEntity
+        - Pylon
+        - Pair
+        - Token
       abis:
         - name: ZirconPylonFactory
           file: ../abis/ZirconPylonFactory.json
@@ -85,7 +87,27 @@ templates:
         - event: Sync(uint112,uint112)
           handler: handleSync
   - kind: ethereum/contract
-    name: Zircon
+    name: ZirconPoolToken
+    network: mbase
+    source:
+      abi: ZirconPoolToken
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.3
+      language: wasm/assemblyscript
+      file: ./src/mappings/core.ts
+      entities:
+        - ZirconPoolTokenEntity
+      abis:
+        - name: ZirconPoolToken
+          file: ../abis/ZirconPoolToken.json
+        - name: PylonFactory
+          file: ../abis/ZirconPylonFactory.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransferPoolTokens
+  - kind: ethereum/contract
+    name: ZirconPylon
     network: mbase
     source:
       abi: Zircon
@@ -95,8 +117,10 @@ templates:
       language: wasm/assemblyscript
       file: ./src/mappings/core.ts
       entities:
+        - Pair
         - Pylon
         - Token
+        - ZirconPoolTokenEntity
       abis:
         - name: Zircon
           file: ../abis/ZirconPylon.json
@@ -113,21 +137,3 @@ templates:
           handler: handlePylonBurn
         - event: BurnAsync(address,uint256,uint256)
           handler: handlePylonBurnAsync
-  - kind: ethereum/contract
-    name: ZirconPoolToken
-    network: mbase
-    source:
-      abi: ZirconPoolToken
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.3
-      language: wasm/assemblyscript
-      file: ./src/mappings/core.ts
-      entities:
-        - ZirconPoolToken
-      abis:
-        - name: ZirconPoolToken
-          file: ../abis/ZirconPoolToken.json
-      eventHandlers:
-        - event: Transfer(indexed address,indexed address,uint256)
-          handler: handleTransferPoolTokens

@@ -1,9 +1,9 @@
 /* eslint-disable prefer-const */
 import { log } from '@graphprotocol/graph-ts'
-import { PairCreated, PylonCreated } from '../types/Factory/Factory'
+import { PairCreated } from '../types/Factory/Factory'
 import { Bundle, Pair, Pylon, Token, UniswapFactory, ZirconFactory, ZirconPoolTokenEntity } from '../types/schema'
-import { Pair as PairTemplate, Zircon, ZirconPoolToken } from '../types/templates'
-import { PoolTokenCreated } from '../types/ZirconPylonFactory/ZirconPylonFactory'
+import { Pair as PairTemplate, ZirconPylon, ZirconPoolToken } from '../types/templates'
+import { PoolTokenCreated, PylonCreated } from '../types/ZirconPylonFactory/ZirconPylonFactory'
 import {
   FACTORY_ADDRESS,
   fetchTokenDecimals,
@@ -119,10 +119,10 @@ export function handleNewPair(event: PairCreated): void {
 
 export function handlePylonCreated(event: PylonCreated): void {
   // load factory (create if first exchange)
-  log.warning('Calling handlePylonCreated {}', ['Working'])
   let factory = ZirconFactory.load(PYLON_FACTORY)
   if (factory === null) {
-    factory = new ZirconFactory(FACTORY_ADDRESS)
+    log.warning('CREATING ZIRCON FACTORY FROM PYLONCREATED HANDLER {}', ['WORKS'])
+    factory = new ZirconFactory(PYLON_FACTORY)
     factory.pylonCount = ZERO_BI
     factory.txCount = ZERO_BI
 
@@ -194,7 +194,7 @@ export function handlePylonCreated(event: PylonCreated): void {
   pylon.createdAtBlockNumber = event.block.number
 
   // create the tracked contract based on the template
-  Zircon.create(event.params.pair)
+  ZirconPylon.create(event.params.pair)
 
   // save updated values
   token0.save()
@@ -208,7 +208,8 @@ export function handlePoolTokenCreated(event: PoolTokenCreated): void {
   log.warning('Calling handlePoolTokenCreated {}', ['Working'])
   let factory = ZirconFactory.load(PYLON_FACTORY)
   if (factory === null) {
-    factory = new ZirconFactory(FACTORY_ADDRESS)
+    log.warning('CREATING ZIRCON FACTORY FROM POOLTOKENCREATED HANDLER {}', ['WORKS'])
+    factory = new ZirconFactory(PYLON_FACTORY)
     factory.pylonCount = ZERO_BI
     factory.txCount = ZERO_BI
 
