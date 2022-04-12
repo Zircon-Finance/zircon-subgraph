@@ -1,9 +1,9 @@
 /* eslint-disable prefer-const */
 import { log } from '@graphprotocol/graph-ts'
 import { PairCreated } from '../types/Factory/Factory'
-import { Bundle, Pair, Pylon, Token, UniswapFactory, ZirconFactory, ZirconPoolTokenEntity } from '../types/schema'
-import { Pair as PairTemplate, ZirconPylon, ZirconPoolToken } from '../types/templates'
-import { PoolTokenCreated, PylonCreated } from '../types/ZirconPylonFactory/ZirconPylonFactory'
+import { Bundle, Pair, Pylon, Token, UniswapFactory, ZirconFactory } from '../types/schema'
+import { Pair as PairTemplate, ZirconPylon } from '../types/templates'
+import { PylonCreated } from '../types/ZirconPylonFactory/ZirconPylonFactory'
 import {
   FACTORY_ADDRESS,
   fetchTokenDecimals,
@@ -203,64 +203,64 @@ export function handlePylonCreated(event: PylonCreated): void {
   factory.save()
 }
 
-export function handlePoolTokenCreated(event: PoolTokenCreated): void {
-  // load factory (create if first exchange)
-  log.warning('Calling handlePoolTokenCreated {}', ['Working'])
-  let factory = ZirconFactory.load(PYLON_FACTORY)
-  if (factory === null) {
-    log.warning('CREATING ZIRCON FACTORY FROM POOLTOKENCREATED HANDLER {}', ['WORKS'])
-    factory = new ZirconFactory(PYLON_FACTORY)
-    factory.pylonCount = ZERO_BI
-    factory.txCount = ZERO_BI
+// export function handlePoolTokenCreated(event: PoolTokenCreated): void {
+//   // load factory (create if first exchange)
+//   log.warning('Calling handlePoolTokenCreated {}', ['Working'])
+//   let factory = ZirconFactory.load(PYLON_FACTORY)
+//   if (factory === null) {
+//     log.warning('CREATING ZIRCON FACTORY FROM POOLTOKENCREATED HANDLER {}', ['WORKS'])
+//     factory = new ZirconFactory(PYLON_FACTORY)
+//     factory.pylonCount = ZERO_BI
+//     factory.txCount = ZERO_BI
 
-    // create new bundle
-    let bundle = new Bundle('1')
-    bundle.ethPrice = ZERO_BD
-    bundle.save()
-  }
-  factory.save()
+//     // create new bundle
+//     let bundle = new Bundle('1')
+//     bundle.ethPrice = ZERO_BD
+//     bundle.save()
+//   }
+//   factory.save()
 
-  // create the tokens
-  let token0 = Token.load(event.params.token.toHexString())
-  log.warning('Calling new pool token for token {}', [token0.name])
+//   // create the tokens
+//   let token0 = Token.load(event.params.token.toHexString())
+//   log.warning('Calling new pool token for token {}', [token0.name])
 
-  // fetch info if null
-  if (token0 === null) {
-    token0 = new Token(event.params.token.toHexString())
-    token0.symbol = fetchTokenSymbol(event.params.token)
-    token0.name = fetchTokenName(event.params.token)
-    token0.totalSupply = fetchTokenTotalSupply(event.params.token)
-    let decimals = fetchTokenDecimals(event.params.token)
+//   // fetch info if null
+//   if (token0 === null) {
+//     token0 = new Token(event.params.token.toHexString())
+//     token0.symbol = fetchTokenSymbol(event.params.token)
+//     token0.name = fetchTokenName(event.params.token)
+//     token0.totalSupply = fetchTokenTotalSupply(event.params.token)
+//     let decimals = fetchTokenDecimals(event.params.token)
 
-    // bail if we couldn't figure out the decimals
-    if (decimals === null) {
-      log.debug('mybug the decimal on token 0 was null', [])
-      return
-    }
+//     // bail if we couldn't figure out the decimals
+//     if (decimals === null) {
+//       log.debug('mybug the decimal on token 0 was null', [])
+//       return
+//     }
 
-    token0.decimals = decimals
-    token0.derivedETH = ZERO_BD
-    token0.tradeVolume = ZERO_BD
-    token0.tradeVolumeUSD = ZERO_BD
-    token0.untrackedVolumeUSD = ZERO_BD
-    token0.totalLiquidity = ZERO_BD
-    // token0.allPairs = []
-    token0.txCount = ZERO_BI
-  }
+//     token0.decimals = decimals
+//     token0.derivedETH = ZERO_BD
+//     token0.tradeVolume = ZERO_BD
+//     token0.tradeVolumeUSD = ZERO_BD
+//     token0.untrackedVolumeUSD = ZERO_BD
+//     token0.totalLiquidity = ZERO_BD
+//     // token0.allPairs = []
+//     token0.txCount = ZERO_BI
+//   }
 
-  let poolToken = new ZirconPoolTokenEntity(event.params.poolToken.toHexString())
-  poolToken.token = token0.id
-  poolToken.pair = event.params.pair
-  poolToken.pylon = event.params.pylon
-  poolToken.isAnchor = event.params.isAnchor
-  poolToken.createdAtTimestamp = event.block.timestamp
-  poolToken.createdAtBlockNumber = event.block.number
+//   let poolToken = new ZirconPoolTokenEntity(event.params.poolToken.toHexString())
+//   poolToken.token = token0.id
+//   poolToken.pair = event.params.pair
+//   poolToken.pylon = event.params.pylon
+//   poolToken.isAnchor = event.params.isAnchor
+//   poolToken.createdAtTimestamp = event.block.timestamp
+//   poolToken.createdAtBlockNumber = event.block.number
 
-  // create the tracked contract based on the template
-  ZirconPoolToken.create(event.params.poolToken)
+//   // create the tracked contract based on the template
+//   ZirconPoolToken.create(event.params.poolToken)
 
-  // save updated values
-  token0.save()
-  poolToken.save()
-  factory.save()
-}
+//   // save updated values
+//   token0.save()
+//   poolToken.save()
+//   factory.save()
+// }

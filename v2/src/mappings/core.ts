@@ -440,6 +440,7 @@ export function handleMint(event: Mint): void {
 export function handleMintSync(event: MintSync): void {
   let transaction = PylonTransaction.load(event.transaction.hash.toHexString())
   let mints = transaction.mints
+  if (!mints) return;
   log.warning('Mints are empty (handleMintSync): {}', [mints.length === 0 || mints === null ? 'YES' : 'NO'])
   let mint = PylonMint.load(mints![mints.length - 1])
 
