@@ -50,7 +50,7 @@ export function handleTransferPoolTokens(event: PylonTransfer): void {
 
   let factory = ZirconFactory.load(PYLON_FACTORY) //TODO: Pylon Factory
   let transactionHash = event.transaction.hash.toHexString()
-  
+
   // user stats
   let from = event.params.from
   createUser(from)
@@ -440,7 +440,6 @@ export function handleMint(event: Mint): void {
 export function handleMintSync(event: MintSync): void {
   let transaction = PylonTransaction.load(event.transaction.hash.toHexString())
   let mints = transaction.mints
-  if (!mints) return;
   log.warning('Mints are empty (handleMintSync): {}', [mints.length === 0 || mints === null ? 'YES' : 'NO'])
   let mint = PylonMint.load(mints![mints.length - 1])
 

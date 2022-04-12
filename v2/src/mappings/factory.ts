@@ -1,8 +1,8 @@
 /* eslint-disable prefer-const */
 import { log } from '@graphprotocol/graph-ts'
 import { PairCreated } from '../types/Factory/Factory'
-import { Bundle, Pair, Pylon, Token, UniswapFactory, ZirconFactory } from '../types/schema'
-import { Pair as PairTemplate, ZirconPylon } from '../types/templates'
+import { Bundle, Pair, Pylon, Token, UniswapFactory, ZirconFactory, ZirconPoolTokenEntity } from '../types/schema'
+import { Pair as PairTemplate, ZirconPoolToken, ZirconPylon } from '../types/templates'
 import { PylonCreated } from '../types/ZirconPylonFactory/ZirconPylonFactory'
 import {
   FACTORY_ADDRESS,
@@ -196,7 +196,33 @@ export function handlePylonCreated(event: PylonCreated): void {
   // create the tracked contract based on the template
   ZirconPylon.create(event.params.pair)
 
+  //Creating pool Token
+
+  let poolToken = new ZirconPoolTokenEntity(event.params.poolToken0.toHexString())
+  poolToken.token = token0.id
+  poolToken.pair = event.params.pair
+  poolToken.pylon = event.params.pylon
+  poolToken.isAnchor = false
+  poolToken.factory = event.params.pair
+  poolToken.createdAtTimestamp = event.block.timestamp
+  poolToken.createdAtBlockNumber = event.block.number
+
+  let poolToken1 = new ZirconPoolTokenEntity(event.params.poolToken1.toHexString())
+  poolToken1.token = token0.id
+  poolToken1.pair = event.params.pair
+  poolToken1.pylon = event.params.pylon
+  poolToken1.factory = event.params.pair
+  poolToken1.isAnchor = false
+  poolToken1.createdAtTimestamp = event.block.timestamp
+  poolToken1.createdAtBlockNumber = event.block.number
+
+  // create the tracked contract based on the template
+  ZirconPoolToken.create(event.params.poolToken0)
+  ZirconPoolToken.create(event.params.poolToken1)
+
   // save updated values
+  poolToken.save()
+  poolToken1.save()
   token0.save()
   token1.save()
   pylon.save()
@@ -212,18 +238,18 @@ export function handlePylonCreated(event: PylonCreated): void {
 //     factory = new ZirconFactory(PYLON_FACTORY)
 //     factory.pylonCount = ZERO_BI
 //     factory.txCount = ZERO_BI
-
+//
 //     // create new bundle
 //     let bundle = new Bundle('1')
 //     bundle.ethPrice = ZERO_BD
 //     bundle.save()
 //   }
 //   factory.save()
-
+//
 //   // create the tokens
 //   let token0 = Token.load(event.params.token.toHexString())
 //   log.warning('Calling new pool token for token {}', [token0.name])
-
+//
 //   // fetch info if null
 //   if (token0 === null) {
 //     token0 = new Token(event.params.token.toHexString())
@@ -231,13 +257,13 @@ export function handlePylonCreated(event: PylonCreated): void {
 //     token0.name = fetchTokenName(event.params.token)
 //     token0.totalSupply = fetchTokenTotalSupply(event.params.token)
 //     let decimals = fetchTokenDecimals(event.params.token)
-
+//
 //     // bail if we couldn't figure out the decimals
 //     if (decimals === null) {
 //       log.debug('mybug the decimal on token 0 was null', [])
 //       return
 //     }
-
+//
 //     token0.decimals = decimals
 //     token0.derivedETH = ZERO_BD
 //     token0.tradeVolume = ZERO_BD
@@ -247,7 +273,7 @@ export function handlePylonCreated(event: PylonCreated): void {
 //     // token0.allPairs = []
 //     token0.txCount = ZERO_BI
 //   }
-
+//
 //   let poolToken = new ZirconPoolTokenEntity(event.params.poolToken.toHexString())
 //   poolToken.token = token0.id
 //   poolToken.pair = event.params.pair
@@ -255,10 +281,10 @@ export function handlePylonCreated(event: PylonCreated): void {
 //   poolToken.isAnchor = event.params.isAnchor
 //   poolToken.createdAtTimestamp = event.block.timestamp
 //   poolToken.createdAtBlockNumber = event.block.number
-
+//
 //   // create the tracked contract based on the template
 //   ZirconPoolToken.create(event.params.poolToken)
-
+//
 //   // save updated values
 //   token0.save()
 //   poolToken.save()
