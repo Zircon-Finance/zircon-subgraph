@@ -197,22 +197,21 @@ export function handlePylonCreated(event: PylonCreated): void {
   ZirconPylon.create(event.params.pair)
 
   //Creating pool Token
-
   let poolToken = new ZirconPoolTokenEntity(event.params.poolToken0.toHexString())
   poolToken.token = token0.id
   poolToken.pair = event.params.pair
   poolToken.pylon = event.params.pylon
   poolToken.isAnchor = false
-  poolToken.factory = event.params.pair
+  poolToken.factory = event.params.pair //TODO: Pass Factory Address
   poolToken.createdAtTimestamp = event.block.timestamp
   poolToken.createdAtBlockNumber = event.block.number
 
   let poolToken1 = new ZirconPoolTokenEntity(event.params.poolToken1.toHexString())
-  poolToken1.token = token0.id
+  poolToken1.token = token1.id
   poolToken1.pair = event.params.pair
   poolToken1.pylon = event.params.pylon
   poolToken1.factory = event.params.pair
-  poolToken1.isAnchor = false
+  poolToken1.isAnchor = true
   poolToken1.createdAtTimestamp = event.block.timestamp
   poolToken1.createdAtBlockNumber = event.block.number
 
