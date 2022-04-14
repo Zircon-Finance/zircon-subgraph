@@ -17,7 +17,7 @@ import {
   ZirconPoolTokenEntity
 } from '../types/schema'
 import { Pair as PairContract, Mint, Burn, Swap, Transfer, Sync } from '..//types/templates/Pair/Pair'
-import { MintAsync, MintSync, MintAsync100, Burn as ZirconBurn, BurnAsync } from '../types/templates/Zircon/Zircon'
+import { MintAsync, MintSync, MintAsync100, Burn as ZirconBurn, BurnAsync } from '..//types/templates/ZirconPylon/ZirconPylon'
 import { Transfer as PylonTransfer } from '../types/templates/ZirconPoolToken/ZirconPoolToken'
 import { updatePairDayData, updateTokenDayData, updateUniswapDayData, updatePairHourData } from './dayUpdates'
 import { getEthPriceInUSD, findEthPerToken, getTrackedVolumeUSD, getTrackedLiquidityUSD } from './pricing'
@@ -43,7 +43,7 @@ function isCompleteMint(mintId: string): boolean {
 
 export function handleTransferPoolTokens(event: PylonTransfer): void {
   // Mint
-  log.warning('PYLON TRANSFER SUCCESFULLY  {}', ['called'])
+  log.warning('PYLON TRANSFER SUCCESFULLY {}', ['CALLED'])
   if (event.params.to.toHexString() == ADDRESS_ZERO && event.params.value.equals(BigInt.fromI32(1000))) {
     return
   }
@@ -105,7 +105,6 @@ export function handleTransferPoolTokens(event: PylonTransfer): void {
       factory.save()
     }
   }
-
   // case where direct send first on ETH withdrawls
   //TODO: Change pair to pylon
   if (event.params.to.toHexString() == poolToken.id) {
@@ -383,6 +382,7 @@ export function handleSync(event: Sync): void {
 }
 
 export function handleMint(event: Mint): void {
+  log.warning('Normal MINT called {}',['Succesfully'])
   let transaction = Transaction.load(event.transaction.hash.toHexString())
   let mints = transaction.mints
   let mint = MintEvent.load(mints![mints.length - 1])
@@ -438,6 +438,7 @@ export function handleMint(event: Mint): void {
 }
 
 export function handleMintSync(event: MintSync): void {
+  log.warning('HandleMintSync call {}',['Succesfull'])
   let transaction = PylonTransaction.load(event.transaction.hash.toHexString())
   let mints = transaction.mints
   log.warning('Mints are empty (handleMintSync): {}', [mints.length === 0 || mints === null ? 'YES' : 'NO'])
@@ -646,6 +647,7 @@ export function handleBurn(event: Burn): void {
 }
 
 export function handlePylonBurn(event: ZirconBurn): void {
+  log.warning('Pylon burn called {}', ['Succesfully'])
   let transaction = PylonTransaction.load(event.transaction.hash.toHexString())
 
   // safety check
@@ -700,6 +702,7 @@ export function handlePylonBurn(event: ZirconBurn): void {
 }
 
 export function handlePylonBurnAsync(event: BurnAsync): void {
+  log.warning('Pylon burn called {}', ['Succesfully'])
   let transaction = PylonTransaction.load(event.transaction.hash.toHexString())
 
   // safety check

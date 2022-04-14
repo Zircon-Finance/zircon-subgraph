@@ -8,14 +8,14 @@ export class Pair extends DataSourceTemplate {
   }
 }
 
-export class ZirconPoolToken extends DataSourceTemplate {
-  static create(address: Address): void {
-    DataSourceTemplate.create("ZirconPoolToken", [address.toHex()]);
-  }
-}
-
 export class ZirconPylon extends DataSourceTemplate {
   static create(address: Address): void {
     DataSourceTemplate.create("ZirconPylon", [address.toHex()]);
+  }
+}
+
+export class ZirconPoolToken extends DataSourceTemplate {
+  static create(address: Address): void {
+    DataSourceTemplate.create("ZirconPoolToken", [address.toHex()]);
   }
 }

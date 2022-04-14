@@ -15,28 +15,6 @@ import {
   CallResult
 } from "@graphprotocol/graph-ts";
 
-export class PoolTokenCreated extends EthereumEvent {
-  get params(): PoolTokenCreated__Params {
-    return new PoolTokenCreated__Params(this);
-  }
-}
-
-export class PoolTokenCreated__Params {
-  _event: PoolTokenCreated;
-
-  constructor(event: PoolTokenCreated) {
-    this._event = event;
-  }
-
-  get token0(): Address {
-    return this._event.parameters[0].value.toAddress();
-  }
-
-  get poolToken(): Address {
-    return this._event.parameters[1].value.toAddress();
-  }
-}
-
 export class PylonCreated extends EthereumEvent {
   get params(): PylonCreated__Params {
     return new PylonCreated__Params(this);
@@ -58,14 +36,26 @@ export class PylonCreated__Params {
     return this._event.parameters[1].value.toAddress();
   }
 
-  get pair(): Address {
+  get poolToken0(): Address {
     return this._event.parameters[2].value.toAddress();
+  }
+
+  get poolToken1(): Address {
+    return this._event.parameters[3].value.toAddress();
+  }
+
+  get pylon(): Address {
+    return this._event.parameters[4].value.toAddress();
+  }
+
+  get pair(): Address {
+    return this._event.parameters[5].value.toAddress();
   }
 }
 
-export class Factory extends SmartContract {
-  static bind(address: Address): Factory {
-    return new Factory("Factory", address);
+export class ZirconPylonFactory extends SmartContract {
+  static bind(address: Address): ZirconPylonFactory {
+    return new ZirconPylonFactory("ZirconPylonFactory", address);
   }
 
   addPylon(_pairAddress: Address, _tokenA: Address, _tokenB: Address): Address {
@@ -142,6 +132,21 @@ export class Factory extends SmartContract {
     }
     let value = result.value;
     return CallResult.fromValue(value[0].toBigInt());
+  }
+
+  energyFactory(): Address {
+    let result = super.call("energyFactory", []);
+
+    return result[0].toAddress();
+  }
+
+  try_energyFactory(): CallResult<Address> {
+    let result = super.tryCall("energyFactory", []);
+    if (result.reverted) {
+      return new CallResult();
+    }
+    let value = result.value;
+    return CallResult.fromValue(value[0].toAddress());
   }
 
   factory(): Address {

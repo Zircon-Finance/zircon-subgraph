@@ -215,7 +215,7 @@ export class PylonUpdate__Params {
   }
 }
 
-export class Zircon__burnAsyncResult {
+export class ZirconPylon__burnAsyncResult {
   value0: BigInt;
   value1: BigInt;
 
@@ -232,7 +232,7 @@ export class Zircon__burnAsyncResult {
   }
 }
 
-export class Zircon__getSyncReservesResult {
+export class ZirconPylon__getSyncReservesResult {
   value0: BigInt;
   value1: BigInt;
   value2: BigInt;
@@ -252,7 +252,7 @@ export class Zircon__getSyncReservesResult {
   }
 }
 
-export class Zircon__initPylonResult {
+export class ZirconPylon__initPylonResult {
   value0: BigInt;
   value1: BigInt;
 
@@ -269,7 +269,7 @@ export class Zircon__initPylonResult {
   }
 }
 
-export class Zircon__pylonTokenResult {
+export class ZirconPylon__pylonTokenResult {
   value0: Address;
   value1: Address;
 
@@ -286,9 +286,9 @@ export class Zircon__pylonTokenResult {
   }
 }
 
-export class Zircon extends SmartContract {
-  static bind(address: Address): Zircon {
-    return new Zircon("Zircon", address);
+export class ZirconPylon extends SmartContract {
+  static bind(address: Address): ZirconPylon {
+    return new ZirconPylon("ZirconPylon", address);
   }
 
   MINIMUM_LIQUIDITY(): BigInt {
@@ -342,13 +342,13 @@ export class Zircon extends SmartContract {
     return CallResult.fromValue(value[0].toBigInt());
   }
 
-  burnAsync(_to: Address, _isAnchor: boolean): Zircon__burnAsyncResult {
+  burnAsync(_to: Address, _isAnchor: boolean): ZirconPylon__burnAsyncResult {
     let result = super.call("burnAsync", [
       EthereumValue.fromAddress(_to),
       EthereumValue.fromBoolean(_isAnchor)
     ]);
 
-    return new Zircon__burnAsyncResult(
+    return new ZirconPylon__burnAsyncResult(
       result[0].toBigInt(),
       result[1].toBigInt()
     );
@@ -357,7 +357,7 @@ export class Zircon extends SmartContract {
   try_burnAsync(
     _to: Address,
     _isAnchor: boolean
-  ): CallResult<Zircon__burnAsyncResult> {
+  ): CallResult<ZirconPylon__burnAsyncResult> {
     let result = super.tryCall("burnAsync", [
       EthereumValue.fromAddress(_to),
       EthereumValue.fromBoolean(_isAnchor)
@@ -367,7 +367,7 @@ export class Zircon extends SmartContract {
     }
     let value = result.value;
     return CallResult.fromValue(
-      new Zircon__burnAsyncResult(value[0].toBigInt(), value[1].toBigInt())
+      new ZirconPylon__burnAsyncResult(value[0].toBigInt(), value[1].toBigInt())
     );
   }
 
@@ -431,24 +431,24 @@ export class Zircon extends SmartContract {
     return CallResult.fromValue(value[0].toBigInt());
   }
 
-  getSyncReserves(): Zircon__getSyncReservesResult {
+  getSyncReserves(): ZirconPylon__getSyncReservesResult {
     let result = super.call("getSyncReserves", []);
 
-    return new Zircon__getSyncReservesResult(
+    return new ZirconPylon__getSyncReservesResult(
       result[0].toBigInt(),
       result[1].toBigInt(),
       result[2].toBigInt()
     );
   }
 
-  try_getSyncReserves(): CallResult<Zircon__getSyncReservesResult> {
+  try_getSyncReserves(): CallResult<ZirconPylon__getSyncReservesResult> {
     let result = super.tryCall("getSyncReserves", []);
     if (result.reverted) {
       return new CallResult();
     }
     let value = result.value;
     return CallResult.fromValue(
-      new Zircon__getSyncReservesResult(
+      new ZirconPylon__getSyncReservesResult(
         value[0].toBigInt(),
         value[1].toBigInt(),
         value[2].toBigInt()
@@ -456,23 +456,23 @@ export class Zircon extends SmartContract {
     );
   }
 
-  initPylon(_to: Address): Zircon__initPylonResult {
+  initPylon(_to: Address): ZirconPylon__initPylonResult {
     let result = super.call("initPylon", [EthereumValue.fromAddress(_to)]);
 
-    return new Zircon__initPylonResult(
+    return new ZirconPylon__initPylonResult(
       result[0].toBigInt(),
       result[1].toBigInt()
     );
   }
 
-  try_initPylon(_to: Address): CallResult<Zircon__initPylonResult> {
+  try_initPylon(_to: Address): CallResult<ZirconPylon__initPylonResult> {
     let result = super.tryCall("initPylon", [EthereumValue.fromAddress(_to)]);
     if (result.reverted) {
       return new CallResult();
     }
     let value = result.value;
     return CallResult.fromValue(
-      new Zircon__initPylonResult(value[0].toBigInt(), value[1].toBigInt())
+      new ZirconPylon__initPylonResult(value[0].toBigInt(), value[1].toBigInt())
     );
   }
 
@@ -644,23 +644,26 @@ export class Zircon extends SmartContract {
     return CallResult.fromValue(value[0].toAddress());
   }
 
-  pylonToken(): Zircon__pylonTokenResult {
+  pylonToken(): ZirconPylon__pylonTokenResult {
     let result = super.call("pylonToken", []);
 
-    return new Zircon__pylonTokenResult(
+    return new ZirconPylon__pylonTokenResult(
       result[0].toAddress(),
       result[1].toAddress()
     );
   }
 
-  try_pylonToken(): CallResult<Zircon__pylonTokenResult> {
+  try_pylonToken(): CallResult<ZirconPylon__pylonTokenResult> {
     let result = super.tryCall("pylonToken", []);
     if (result.reverted) {
       return new CallResult();
     }
     let value = result.value;
     return CallResult.fromValue(
-      new Zircon__pylonTokenResult(value[0].toAddress(), value[1].toAddress())
+      new ZirconPylon__pylonTokenResult(
+        value[0].toAddress(),
+        value[1].toAddress()
+      )
     );
   }
 
