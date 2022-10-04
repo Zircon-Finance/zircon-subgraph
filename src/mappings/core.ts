@@ -281,6 +281,7 @@ export function handleSync(event: Sync): void {
 
 export function handlePylonSync(event: PylonUpdate): void {
   let pylon = Pylon.load(event.address.toHex())
+  let pair = Pair.load(pylon.pairId.toHex())
   let token0 = Token.load(pylon.token0)
   let token1 = Token.load(pylon.token1)
   let pylonFactory = PylonFactory.load(PYLON_FACTORY_ADDRESS)
@@ -293,6 +294,9 @@ export function handlePylonSync(event: PylonUpdate): void {
 
   pylon.reserve0 = convertTokenToDecimal(event.params._reserve0, token0.decimals)
   pylon.reserve1 = convertTokenToDecimal(event.params._reserve1, token1.decimals)
+
+  pylon.totalReserve0 = convertTokenToDecimal(event.params._reserve0, token0.decimals).plus(pair.reserve0)
+  pylon.totalReserve1 = convertTokenToDecimal(event.params._reserve1, token1.decimals).plus(pair.reserve1)
 
   if (pylon.reserve1.notEqual(ZERO_BD)) pylon.token0Price = pylon.reserve0.div(pylon.reserve1)
   else pylon.token0Price = ZERO_BD

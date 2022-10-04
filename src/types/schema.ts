@@ -248,6 +248,24 @@ export class Pylon extends Entity {
     this.set("reserve1", Value.fromBigDecimal(value));
   }
 
+  get totalReserve0(): BigDecimal {
+    let value = this.get("totalReserve0");
+    return value.toBigDecimal();
+  }
+
+  set totalReserve0(value: BigDecimal) {
+    this.set("totalReserve0", Value.fromBigDecimal(value));
+  }
+
+  get totalReserve1(): BigDecimal {
+    let value = this.get("totalReserve1");
+    return value.toBigDecimal();
+  }
+
+  set totalReserve1(value: BigDecimal) {
+    this.set("totalReserve1", Value.fromBigDecimal(value));
+  }
+
   get totalSupply(): BigDecimal {
     let value = this.get("totalSupply");
     return value.toBigDecimal();

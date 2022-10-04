@@ -77,6 +77,8 @@ export function handlePylonCreated(event: PylonCreated): void {
     pylon.token1 = token1.id
     pylon.reserve0 = ZERO_BD
     pylon.reserve1 = ZERO_BD
+    pylon.totalReserve0 = ZERO_BD
+    pylon.totalReserve1 = ZERO_BD
     pylon.reserveETH = ZERO_BD
     pylon.totalSupply = ZERO_BD
     pylon.txCount = ZERO_BI
