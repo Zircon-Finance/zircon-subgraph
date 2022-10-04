@@ -1,0 +1,349 @@
+[
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_energyFactory",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_feeToSetter",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_migrator",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "token0",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "token1",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "pair",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "PairCreated",
+    "type": "event"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "allPairs",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "allPairsLength",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_newEnergyFactory",
+        "type": "address"
+      }
+    ],
+    "name": "changeEnergyFactoryAddress",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_pairAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_tokenA",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_tokenB",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_pylonFactory",
+        "type": "address"
+      }
+    ],
+    "name": "changeEnergyRevAddress",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "newEnergy",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "tokenA",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "tokenB",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_pylonFactory",
+        "type": "address"
+      }
+    ],
+    "name": "createPair",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "pair",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "dynamicRatio",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "energyFactory",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "feeToSetter",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "getPair",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "liquidityFee",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "migrator",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "pairCodeHash",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_dynamicRatio",
+        "type": "uint256"
+      }
+    ],
+    "name": "setDynamicRatio",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_feeToSetter",
+        "type": "address"
+      }
+    ],
+    "name": "setFeeToSetter",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_liquidityFee",
+        "type": "uint256"
+      }
+    ],
+    "name": "setLiquidityFee",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_migrator",
+        "type": "address"
+      }
+    ],
+    "name": "setMigrator",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]

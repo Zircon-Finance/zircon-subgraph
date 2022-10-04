@@ -1,0 +1,602 @@
+[
+  {
+    "inputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "sender",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "aIn0",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "bool",
+        "name": "isAnchor",
+        "type": "bool"
+      }
+    ],
+    "name": "Burn",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "sender",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "aIn0",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "aIn1",
+        "type": "uint256"
+      }
+    ],
+    "name": "BurnAsync",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "sender",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "aIn0",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "aIn1",
+        "type": "uint256"
+      }
+    ],
+    "name": "MintAsync",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "sender",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "aIn0",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "bool",
+        "name": "isAnchor",
+        "type": "bool"
+      }
+    ],
+    "name": "MintSync",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "_vab",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "_vfb",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "_gamma",
+        "type": "uint256"
+      }
+    ],
+    "name": "PylonSync",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "_reserve0",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "_reserve1",
+        "type": "uint256"
+      }
+    ],
+    "name": "PylonUpdate",
+    "type": "event"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "EMABlockNumber",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "anchorKFactor",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_to",
+        "type": "address"
+      },
+      {
+        "internalType": "bool",
+        "name": "_isAnchor",
+        "type": "bool"
+      }
+    ],
+    "name": "burn",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_to",
+        "type": "address"
+      },
+      {
+        "internalType": "bool",
+        "name": "_isAnchor",
+        "type": "bool"
+      }
+    ],
+    "name": "burnAsync",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "amount0",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount1",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_energyAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_energyRevAddress",
+        "type": "address"
+      }
+    ],
+    "name": "changeEnergyAddress",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "formulaSwitch",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "gammaEMA",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "gammaMulDecimals",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "getSyncReserves",
+    "outputs": [
+      {
+        "internalType": "uint112",
+        "name": "_reserve0",
+        "type": "uint112"
+      },
+      {
+        "internalType": "uint112",
+        "name": "_reserve1",
+        "type": "uint112"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_gamma",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_vab",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_anchorKFactor",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bool",
+        "name": "_formulaSwitch",
+        "type": "bool"
+      }
+    ],
+    "name": "initMigratedPylon",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_to",
+        "type": "address"
+      }
+    ],
+    "name": "initPylon",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "floatLiquidity",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "anchorLiquidity",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_floatPoolTokenAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_anchorPoolTokenAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_floatToken",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_anchorToken",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_pairAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_pairFactoryAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_energy",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_energyRev",
+        "type": "address"
+      }
+    ],
+    "name": "initialize",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "initialized",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "isFloatReserve0",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "lastRootKTranslated",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "newPylon",
+        "type": "address"
+      }
+    ],
+    "name": "migrateLiquidity",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "to",
+        "type": "address"
+      },
+      {
+        "internalType": "bool",
+        "name": "shouldMintAnchor",
+        "type": "bool"
+      }
+    ],
+    "name": "mintAsync",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "liquidity",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_to",
+        "type": "address"
+      },
+      {
+        "internalType": "bool",
+        "name": "isAnchor",
+        "type": "bool"
+      }
+    ],
+    "name": "mintPoolTokens",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "liquidity",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "muMulDecimals",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "strikeBlock",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "thisBlockEMA",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "virtualAnchorBalance",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  }
+]
