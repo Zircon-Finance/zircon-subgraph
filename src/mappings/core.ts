@@ -239,7 +239,7 @@ export function handleSync(event: Sync): void {
 
   // update ETH price now that reserves could have changed
   let bundle = Bundle.load('1')
-  bundle.ethPrice = ZERO_BD
+  bundle.ethPrice = getEthPriceInUSD()
   bundle.save()
 
   token0.derivedETH = findEthPerToken(token0 as Token)
@@ -247,15 +247,14 @@ export function handleSync(event: Sync): void {
   token0.save()
   token1.save()
 
-  // get tracked liquidity - will be 0 if neither is in whitelist
   let trackedLiquidityETH: BigDecimal
-  // if (bundle.ethPrice.notEqual(ZERO_BD)) {
-  //   trackedLiquidityETH = getTrackedLiquidityUSD(pair.reserve0, token0 as Token, pair.reserve1, token1 as Token).div(
-  //     bundle.ethPrice
-  //   )
-  // } else {
+  if (bundle.ethPrice.notEqual(ZERO_BD)) {
+    trackedLiquidityETH = getTrackedLiquidityUSD(pair.reserve0, token0 as Token, pair.reserve1, token1 as Token).div(
+      bundle.ethPrice
+    )
+  } else {
     trackedLiquidityETH = ZERO_BD
-  // }
+  }
 
   // use derived amounts within pair
   pair.trackedReserveETH = trackedLiquidityETH
@@ -307,7 +306,7 @@ export function handlePylonSync(event: PylonUpdate): void {
 
   // update ETH price now that reserves could have changed
   let bundle = Bundle.load('1')
-  bundle.ethPrice = ZERO_BD
+  bundle.ethPrice = getEthPriceInUSD()
   bundle.save()
 
   token0.derivedETH = findEthPerToken(token0 as Token)
@@ -316,13 +315,13 @@ export function handlePylonSync(event: PylonUpdate): void {
   token1.save()
 
   let trackedLiquidityETH: BigDecimal
-  // if (bundle.ethPrice.notEqual(ZERO_BD)) {
-  //   trackedLiquidityETH = getTrackedLiquidityUSD(pair.reserve0, token0 as Token, pair.reserve1, token1 as Token).div(
-  //     bundle.ethPrice
-  //   )
-  // } else {
+  if (bundle.ethPrice.notEqual(ZERO_BD)) {
+    trackedLiquidityETH = getTrackedLiquidityUSD(pair.reserve0, token0 as Token, pair.reserve1, token1 as Token).div(
+      bundle.ethPrice
+    )
+  } else {
     trackedLiquidityETH = ZERO_BD
-  // }
+  }
 
   // use derived amounts within pair
   pylon.trackedReserveETH = trackedLiquidityETH
