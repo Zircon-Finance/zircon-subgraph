@@ -136,6 +136,15 @@ export class PylonFactory extends Entity {
     this.set("id", Value.fromString(value));
   }
 
+  get totalVolumeUSD(): BigDecimal {
+    let value = this.get("totalVolumeUSD");
+    return value.toBigDecimal();
+  }
+
+  set totalVolumeUSD(value: BigDecimal) {
+    this.set("totalVolumeUSD", Value.fromBigDecimal(value));
+  }
+
   get totalVolumeETH(): BigDecimal {
     let value = this.get("totalVolumeETH");
     return value.toBigDecimal();
@@ -143,6 +152,15 @@ export class PylonFactory extends Entity {
 
   set totalVolumeETH(value: BigDecimal) {
     this.set("totalVolumeETH", Value.fromBigDecimal(value));
+  }
+
+  get totalLiquidityUSD(): BigDecimal {
+    let value = this.get("totalLiquidityUSD");
+    return value.toBigDecimal();
+  }
+
+  set totalLiquidityUSD(value: BigDecimal) {
+    this.set("totalLiquidityUSD", Value.fromBigDecimal(value));
   }
 
   get totalLiquidityETH(): BigDecimal {
@@ -282,6 +300,15 @@ export class Pylon extends Entity {
 
   set reserveETH(value: BigDecimal) {
     this.set("reserveETH", Value.fromBigDecimal(value));
+  }
+
+  get reserveUSD(): BigDecimal {
+    let value = this.get("reserveUSD");
+    return value.toBigDecimal();
+  }
+
+  set reserveUSD(value: BigDecimal) {
+    this.set("reserveUSD", Value.fromBigDecimal(value));
   }
 
   get trackedReserveETH(): BigDecimal {
@@ -597,6 +624,24 @@ export class Pair extends Entity {
     this.set("reserve1", Value.fromBigDecimal(value));
   }
 
+  get combinedReserve0(): BigDecimal {
+    let value = this.get("combinedReserve0");
+    return value.toBigDecimal();
+  }
+
+  set combinedReserve0(value: BigDecimal) {
+    this.set("combinedReserve0", Value.fromBigDecimal(value));
+  }
+
+  get combinedReserve1(): BigDecimal {
+    let value = this.get("combinedReserve1");
+    return value.toBigDecimal();
+  }
+
+  set combinedReserve1(value: BigDecimal) {
+    this.set("combinedReserve1", Value.fromBigDecimal(value));
+  }
+
   get totalSupply(): BigDecimal {
     let value = this.get("totalSupply");
     return value.toBigDecimal();
@@ -622,6 +667,24 @@ export class Pair extends Entity {
 
   set reserveUSD(value: BigDecimal) {
     this.set("reserveUSD", Value.fromBigDecimal(value));
+  }
+
+  get combinedReserveETH(): BigDecimal {
+    let value = this.get("combinedReserveETH");
+    return value.toBigDecimal();
+  }
+
+  set combinedReserveETH(value: BigDecimal) {
+    this.set("combinedReserveETH", Value.fromBigDecimal(value));
+  }
+
+  get combinedReserveUSD(): BigDecimal {
+    let value = this.get("combinedReserveUSD");
+    return value.toBigDecimal();
+  }
+
+  set combinedReserveUSD(value: BigDecimal) {
+    this.set("combinedReserveUSD", Value.fromBigDecimal(value));
   }
 
   get trackedReserveETH(): BigDecimal {

@@ -13,6 +13,8 @@ export function handlePylonCreated(event: PylonCreated): void {
       factory.txCount = ZERO_BI
       factory.totalLiquidityETH = ZERO_BD
       factory.totalVolumeETH = ZERO_BD
+      factory.totalLiquidityUSD = ZERO_BD
+      factory.totalVolumeUSD = ZERO_BD
   
       // create new bundle
       let bundle = new Bundle('1')
@@ -80,6 +82,7 @@ export function handlePylonCreated(event: PylonCreated): void {
     pylon.totalReserve0 = ZERO_BD
     pylon.totalReserve1 = ZERO_BD
     pylon.reserveETH = ZERO_BD
+    pylon.reserveUSD = ZERO_BD
     pylon.totalSupply = ZERO_BD
     pylon.txCount = ZERO_BI
     pylon.trackedReserveETH = ZERO_BD

@@ -24,9 +24,11 @@ type PylonFactory @entity {
   # factory address
   id: ID!
 
-  # total volume
+  totalVolumeUSD: BigDecimal!
   totalVolumeETH: BigDecimal!
 
+  # total liquidity
+  totalLiquidityUSD: BigDecimal!
   totalLiquidityETH: BigDecimal!
 
   # transactions
@@ -50,6 +52,7 @@ type Pylon @entity {
   totalSupply: BigDecimal!
 
   reserveETH: BigDecimal!
+  reserveUSD: BigDecimal!
   # used for separating per pair reserves and global
   trackedReserveETH: BigDecimal!
 
@@ -110,11 +113,18 @@ type Pair @entity {
   token1: Token!
   reserve0: BigDecimal!
   reserve1: BigDecimal!
+  combinedReserve0: BigDecimal!
+  combinedReserve1: BigDecimal!
   totalSupply: BigDecimal!
 
   # derived liquidity
   reserveETH: BigDecimal!
   reserveUSD: BigDecimal!
+
+  # liquidity pair + pylon
+  combinedReserveETH: BigDecimal!
+  combinedReserveUSD: BigDecimal!
+
   # used for separating per pair reserves and global
   trackedReserveETH: BigDecimal!
 

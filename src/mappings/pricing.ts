@@ -1,9 +1,9 @@
 /* eslint-disable prefer-const */
 import { Pair, Token, Bundle } from '../types/schema'
-import { BigDecimal, Address, BigInt } from '@graphprotocol/graph-ts/index'
+import { BigDecimal, Address, BigInt, log } from '@graphprotocol/graph-ts/index'
 import { ZERO_BD, factoryContract, ADDRESS_ZERO, ONE_BD, UNTRACKED_PAIRS } from './helpers'
 
-const WETH_ADDRESS = '0x98878B06940aE243284CA214f92Bb71a2b032B8A'
+const WETH_ADDRESS = '0x98878b06940ae243284ca214f92bb71a2b032b8a'
 const WMOVR_USDC_PAIR = '0xcc2a7cef44caa59847699104629e034ea7d89f6a' 
  // created block 10093341
 
@@ -21,7 +21,6 @@ export function getEthPriceInUSD(): BigDecimal {
 
 // token where amounts should contribute to tracked volume and liquidity
 let WHITELIST: string[] = [
-  '0x98878b06940ae243284ca214f92bb71a2b032b8a', // WMOVR
   '0x4545e94974adacb82fc56bcf136b07943e152055', // ZRG
   '0xe3f5a90f9cb311505cd691a46596599aa1a0ad7d', // USDC
   '0x639a647fbe20b6c8ac19e48e2de44ea792c62c5c', // ETH
@@ -47,21 +46,55 @@ export function findEthPerToken(token: Token): BigDecimal {
     return ONE_BD
   }
   // loop through whitelist and check if paired with any
-  for (let i = 0; i < WHITELIST.length; ++i) {
-    let pairAddress = factoryContract.getPair(Address.fromString(token.id), Address.fromString(WHITELIST[i]))
-    if (pairAddress.toHexString() != ADDRESS_ZERO) {
-      let pair = Pair.load(pairAddress.toHexString())
-      if (pair.token0 == token.id && pair.reserveETH.gt(MINIMUM_LIQUIDITY_THRESHOLD_ETH)) {
-        let token1 = Token.load(pair.token1)
-        return pair.token1Price.times(token1.derivedETH as BigDecimal) // return token1 per our token * Eth per token 1
-      }
-      if (pair.token1 == token.id && pair.reserveETH.gt(MINIMUM_LIQUIDITY_THRESHOLD_ETH)) {
-        let token0 = Token.load(pair.token0)
-        return pair.token0Price.times(token0.derivedETH as BigDecimal) // return token0 per our token * ETH per token 0
-      }
-    }
-  }
-  return ZERO_BD // nothing was found return 0
+    // let pairAddress = factoryContract.getPair(Address.fromString(token.id), Address.fromString(WHITELIST[i]))
+    // if (pairAddress.toHexString() != ADDRESS_ZERO) {
+    //   let pair = Pair.load(pairAddress.toHexString())
+    //   if (pair.token0 == token.id && pair.reserveETH.gt(MINIMUM_LIQUIDITY_THRESHOLD_ETH)) {
+    //     let token1 = Token.load(pair.token1)
+    //     return pair.token1Price.times(token1.derivedETH as BigDecimal) // return token1 per our token * Eth per token 1
+    //   }
+    //   if (pair.token1 == token.id && pair.reserveETH.gt(MINIMUM_LIQUIDITY_THRESHOLD_ETH)) {
+    //     let token0 = Token.load(pair.token0)
+    //     return pair.token0Price.times(token0.derivedETH as BigDecimal) // return token0 per our token * ETH per token 0
+    //   }
+    // }
+    if (token.id == '0x4545e94974adacb82fc56bcf136b07943e152055') { // ZRG
+      let pair = Pair.load('0x89bb1bd89c764e1c2d4aa6469062590732b26323')
+      if(pair !== null) {
+      return pair.token1Price
+      } else { return ZERO_BD }
+    } else if (token.id == '0xe3f5a90f9cb311505cd691a46596599aa1a0ad7d') { // USDC
+      let pair = Pair.load('0xcc2a7cef44caa59847699104629e034ea7d89f6a')
+      if(pair !== null) {
+        return pair.token0Price
+        } else { return ZERO_BD }
+    } else if (token.id == '0x639a647fbe20b6c8ac19e48e2de44ea792c62c5c') { // ETH
+      let pair = Pair.load('0xaefafaa837cdd8a35afc11100069e073257c0e3e')
+      if(pair !== null) {
+        return pair.token0Price
+        } else { return ZERO_BD }
+    } else if (token.id == '0x6ccf12b480a99c54b23647c995f4525d544a7e72') { // LDO
+      let pair = Pair.load('0xdea4e4c9e55bb3720d1944e9465fd87a1a704261')
+      if(pair !== null) {
+        return pair.token1Price
+        } else { return ZERO_BD }
+    } else if (token.id == '0xffffffff1fcacbd218edc0eba20fc2308c778080') { // xcKSM
+      let pair = Pair.load('0xd80b9003740ca40cc5f77b3298409809281a622f')
+      if(pair !== null) {
+        return pair.token1Price
+        } else { return ZERO_BD }
+    } else if (token.id == '0xffffffff893264794d9d57e1e0e21e0042af5a0a') { // xcRMRK
+      let pair = Pair.load('0xc702ca41245205b699da7799e8cbb7b13f5936c5')
+      if(pair !== null) {
+        return pair.token0Price
+        } else { return ZERO_BD }
+    } else if (token.id == '0xbb8d88bcd9749636bc4d2be22aac4bb3b01a58f1') { // MFAM
+      let pair = Pair.load('0x69137360e23733a7f31f0b51421b681bb6d8a763')
+      if(pair !== null) {
+        return pair.token0Price
+        } else { return ZERO_BD }
+    } else return ZERO_BD
+    
 }
 
 /**

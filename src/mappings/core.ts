@@ -316,7 +316,7 @@ export function handlePylonSync(event: PylonUpdate): void {
 
   let trackedLiquidityETH: BigDecimal
   if (bundle.ethPrice.notEqual(ZERO_BD)) {
-    trackedLiquidityETH = getTrackedLiquidityUSD(pair.reserve0, token0 as Token, pair.reserve1, token1 as Token).div(
+    trackedLiquidityETH = getTrackedLiquidityUSD(pylon.reserve0, token0 as Token, pylon.reserve1, token1 as Token).div(
       bundle.ethPrice
     )
   } else {
@@ -329,8 +329,19 @@ export function handlePylonSync(event: PylonUpdate): void {
     .times(token0.derivedETH as BigDecimal)
     .plus(pylon.reserve1.times(token1.derivedETH as BigDecimal))
 
+  pylon.reserveUSD = pylon.reserveETH.times(bundle.ethPrice)
+
+  pair.combinedReserve0 = pylon.totalReserve0
+  pair.combinedReserve1 = pylon.totalReserve1
+
+  pair.combinedReserveETH = pylon.totalReserve0.times(token0.derivedETH as BigDecimal).plus(
+    pylon.totalReserve1.times(token1.derivedETH as BigDecimal))
+  pair.combinedReserveUSD = pylon.totalReserve0.times(token0.derivedETH as BigDecimal).plus(
+    pylon.totalReserve1.times(token1.derivedETH as BigDecimal)).times(bundle.ethPrice)
+
   // use tracked amounts globally
   pylonFactory.totalLiquidityETH = pylonFactory.totalLiquidityETH.plus(trackedLiquidityETH)
+  pylonFactory.totalLiquidityUSD = pylonFactory.totalLiquidityETH.times(bundle.ethPrice)
 
   // now correctly set liquidity amounts for each token
   token0.totalLiquidity = token0.totalLiquidity.plus(pylon.reserve0)
@@ -338,6 +349,7 @@ export function handlePylonSync(event: PylonUpdate): void {
 
   // save entities
   pylon.save()
+  pair.save()
   pylonFactory.save()
   token0.save()
   token1.save()
