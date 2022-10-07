@@ -71,7 +71,7 @@ export function findEthPerToken(token: Token): BigDecimal {
     } else if (token.id == '0x639a647fbe20b6c8ac19e48e2de44ea792c62c5c') { // ETH
       let pair = Pair.load('0xaefafaa837cdd8a35afc11100069e073257c0e3e')
       if(pair !== null) {
-        return pair.token0Price
+        return pair.token1Price
         } else { return ZERO_BD }
     } else if (token.id == '0x6ccf12b480a99c54b23647c995f4525d544a7e72') { // LDO
       let pair = Pair.load('0xdea4e4c9e55bb3720d1944e9465fd87a1a704261')
@@ -81,7 +81,7 @@ export function findEthPerToken(token: Token): BigDecimal {
     } else if (token.id == '0xffffffff1fcacbd218edc0eba20fc2308c778080') { // xcKSM
       let pair = Pair.load('0xd80b9003740ca40cc5f77b3298409809281a622f')
       if(pair !== null) {
-        return pair.token1Price
+        return pair.token0Price
         } else { return ZERO_BD }
     } else if (token.id == '0xffffffff893264794d9d57e1e0e21e0042af5a0a') { // xcRMRK
       let pair = Pair.load('0xc702ca41245205b699da7799e8cbb7b13f5936c5')
