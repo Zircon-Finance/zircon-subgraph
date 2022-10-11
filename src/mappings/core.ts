@@ -294,15 +294,17 @@ export function handlePylonSync(event: PylonUpdate): void {
   pylon.reserve0 = convertTokenToDecimal(event.params._reserve0, token0.decimals)
   pylon.reserve1 = convertTokenToDecimal(event.params._reserve1, token1.decimals)
 
-  pylon.totalReserve0 = convertTokenToDecimal(event.params._reserve0, token0.decimals).plus(pair.reserve0)
-  pylon.totalReserve1 = convertTokenToDecimal(event.params._reserve1, token1.decimals).plus(pair.reserve1)
+  pylon.totalReserve0 = pair.token0 == pylon.token0 ? convertTokenToDecimal(event.params._reserve0, token0.decimals).plus(pair.reserve0) :
+    convertTokenToDecimal(event.params._reserve0, token0.decimals).plus(pair.reserve1)
+  pylon.totalReserve1 = pair.token1 == pylon.token1 ? convertTokenToDecimal(event.params._reserve1, token1.decimals).plus(pair.reserve1) :
+    convertTokenToDecimal(event.params._reserve1, token1.decimals).plus(pair.reserve0)
 
   if (pylon.reserve1.notEqual(ZERO_BD)) pylon.token0Price = pylon.reserve0.div(pylon.reserve1)
   else pylon.token0Price = ZERO_BD
   if (pylon.reserve0.notEqual(ZERO_BD)) pylon.token1Price = pylon.reserve1.div(pylon.reserve0)
   else pylon.token1Price = ZERO_BD
 
-  pylon.save()
+  
 
   // update ETH price now that reserves could have changed
   let bundle = Bundle.load('1')
