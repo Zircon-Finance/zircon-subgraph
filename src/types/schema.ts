@@ -1876,6 +1876,24 @@ export class UniswapDayData extends Entity {
     this.set("totalLiquidityUSD", Value.fromBigDecimal(value));
   }
 
+  get totalCombinedLiquidityETH(): BigDecimal {
+    let value = this.get("totalCombinedLiquidityETH");
+    return value.toBigDecimal();
+  }
+
+  set totalCombinedLiquidityETH(value: BigDecimal) {
+    this.set("totalCombinedLiquidityETH", Value.fromBigDecimal(value));
+  }
+
+  get totalCombinedLiquidityUSD(): BigDecimal {
+    let value = this.get("totalCombinedLiquidityUSD");
+    return value.toBigDecimal();
+  }
+
+  set totalCombinedLiquidityUSD(value: BigDecimal) {
+    this.set("totalCombinedLiquidityUSD", Value.fromBigDecimal(value));
+  }
+
   get txCount(): BigInt {
     let value = this.get("txCount");
     return value.toBigInt();

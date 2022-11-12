@@ -1,11 +1,12 @@
 /* eslint-disable prefer-const */
 import { BigDecimal, BigInt, EthereumEvent } from '@graphprotocol/graph-ts'
-import { Bundle, Pair, PairDayData, Token, TokenDayData, UniswapDayData, UniswapFactory } from '../types/schema'
+import { Bundle, Pair, PairDayData, PylonFactory, Token, TokenDayData, UniswapDayData, UniswapFactory } from '../types/schema'
 import { PairHourData } from './../types/schema'
-import { FACTORY_ADDRESS, ONE_BI, ZERO_BD, ZERO_BI } from './helpers'
+import { FACTORY_ADDRESS, ONE_BI, PYLON_FACTORY_ADDRESS, ZERO_BD, ZERO_BI } from './helpers'
 
 export function updateUniswapDayData(event: EthereumEvent): UniswapDayData {
   let uniswap = UniswapFactory.load(FACTORY_ADDRESS)
+  let pylon = PylonFactory.load(PYLON_FACTORY_ADDRESS)
   let timestamp = event.block.timestamp.toI32()
   let dayID = timestamp / 86400
   let dayStartTimestamp = dayID * 86400
@@ -18,10 +19,13 @@ export function updateUniswapDayData(event: EthereumEvent): UniswapDayData {
     uniswapDayData.totalVolumeUSD = ZERO_BD
     uniswapDayData.totalVolumeETH = ZERO_BD
     uniswapDayData.dailyVolumeUntracked = ZERO_BD
+    uniswapDayData.totalCombinedLiquidityETH = ZERO_BD
+    uniswapDayData.totalCombinedLiquidityUSD = ZERO_BD
   }
-
   uniswapDayData.totalLiquidityUSD = uniswap.totalLiquidityUSD
   uniswapDayData.totalLiquidityETH = uniswap.totalLiquidityETH
+  uniswapDayData.totalCombinedLiquidityUSD = uniswap.totalLiquidityUSD.plus(pylon === null ? ZERO_BD : pylon.totalLiquidityUSD as BigDecimal)
+  uniswapDayData.totalCombinedLiquidityETH = uniswap.totalLiquidityETH.plus(pylon === null ? ZERO_BD : pylon.totalLiquidityETH as BigDecimal)
   uniswapDayData.txCount = uniswap.txCount
   uniswapDayData.save()
 

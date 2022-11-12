@@ -15,6 +15,8 @@ type UniswapFactory @entity {
   # total liquidity
   totalLiquidityUSD: BigDecimal!
   totalLiquidityETH: BigDecimal!
+  totalCombinedLiquidityETH: BigDecimal!
+  totalCombinedLiquidityUSD: BigDecimal!
 
   # transactions
   txCount: BigInt!
@@ -286,6 +288,9 @@ type UniswapDayData @entity {
   totalLiquidityETH: BigDecimal!
   totalVolumeUSD: BigDecimal! # Accumulate at each trade, not just calculated off whatever totalVolume is. making it more accurate as it is a live conversion
   totalLiquidityUSD: BigDecimal!
+
+  totalCombinedLiquidityETH: BigDecimal!
+  totalCombinedLiquidityUSD: BigDecimal!
 
   txCount: BigInt!
 }
